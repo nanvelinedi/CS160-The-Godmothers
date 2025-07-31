@@ -1,9 +1,9 @@
 import { Routes, Route, Link } from 'react-router-dom';
-import Home from './home';
-import Login from './login';
-import Signup from './signup';
-import Search from './search';
-import Profile from './profile';
+import Home from './pages/Home';
+import Login from './pages/login';
+import Signup from './pages/signup';
+import Search from './pages/search';
+import Profile from './pages/profile';
 
 function App() {
   return (
