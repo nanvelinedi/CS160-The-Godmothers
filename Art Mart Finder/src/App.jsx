@@ -17,6 +17,11 @@ function App() {
         <Link to="/profile">Profile</Link>
       </nav>
 
+      {/* Tailwind test box */}
+      <div className="bg-pink-400 text-white p-4 rounded-lg mt-4">
+        If this box is pink, Tailwind is working 🎉
+      </div>
+
       {/* Routes to different pages */}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -27,6 +32,7 @@ function App() {
       </Routes>
     </div>
   );
+
 }
 
 export default App;
