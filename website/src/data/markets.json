@@ -1,0 +1,20 @@
+[
+  {
+    "id": "sarahs",
+    "name": "Sarah’s Art Mart",
+    "address": "231 Summers Road",
+    "lat": 41.8781,
+    "lng": -87.6298,
+    "date": "2025-08-24",
+    "tags": ["handmade","paintings"]
+  },
+  {
+    "id": "japan",
+    "name": "Japan Art Mart",
+    "address": "12 Hills St.",
+    "lat": 41.9,
+    "lng": -87.65,
+    "date": "2025-09-10",
+    "tags": ["ceramics","prints"]
+  }
+]

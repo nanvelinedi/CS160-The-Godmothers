@@ -6,43 +6,55 @@
   themes: retro --default, light, dark;
 }
 
-/* ⛔ Comment these out for now; they override DaisyUI theme colors */
-/*
-:root {
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-  font-family: system-ui, Avenir, Helvetica, Arial,pō0.  sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@import "mapbox-gl/dist/mapbox-gl.css";
+@import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
-a { color: #646cff; }
-a:hover { color: #535bf2; }
-
-body {
-  margin: 10px;
+/* Geocoder pill overrides (fixed) */
+.amf-geocoder .mapboxgl-ctrl-geocoder {
+  /* we still neutralize most styles, but keep layout anchors */
+  all: unset;
   display: flex;
-  place-items: top;
-  min-width: 320px;
-  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  /* <- critical for dropdown positioning */
+  overflow: visible;
+  /* let the dropdown show outside the pill edge */
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  background-color: #1a1a1a;
+.amf-geocoder .mapboxgl-ctrl-geocoder--input {
+  all: unset;
+  width: 100%;
+  height: 3rem;
+  /* 48px pill */
+  padding: 0 2.75rem 0 2.75rem;
+  /* room for icons */
 }
 
-@media (prefers-color-scheme: light) {
-  :root { color: #213547; background-color: #fff; }
-  a:hover { color: #747bff; }
-  button { background-color: #f9f9f9; }
+.amf-geocoder .mapboxgl-ctrl-geocoder--icon,
+.amf-geocoder .mapboxgl-ctrl-geocoder--icon-search,
+.amf-geocoder .mapboxgl-ctrl-geocoder--icon-loading {
+  display: none !important;
 }
-*/
+
+/* suggestions dropdown */
+.amf-geocoder .suggestions {
+  position: absolute;
+  /* anchor to the control */
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+  max-height: 60vh;
+  overscroll-behavior: contain;
+}
+
+.amf-geocoder .suggestions>li {
+  background: oklch(var(--b1));
+}
+
+.amf-geocoder .suggestions>li:hover {
+  background: oklch(var(--b2));
+}
