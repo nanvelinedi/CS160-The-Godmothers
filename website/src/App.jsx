@@ -1,4 +1,5 @@
 import { Link, Routes, Route } from "react-router-dom";
+
 import Home from "./pages/Home";
 import Search from "./pages/search";
 import Login from "./pages/login";
@@ -7,6 +8,8 @@ import Profile from "./pages/profile";
 import Navbar from "./pages/navbar";
 
 export default function App() {
+  // const username = "John"; // Define the variable here
+
   return (
     <div className="flex min-h-screen bg-base-200">
       <Navbar></Navbar>
