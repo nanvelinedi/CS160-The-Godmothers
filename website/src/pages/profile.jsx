@@ -19,6 +19,13 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("calendar");
   const [savedEventIndex, setSavedEventIndex] = useState(0);
 
+  // Edit Profile Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [profileName, setProfileName] = useState("New User");
+  const [bio, setBio] = useState("No bio yet...");
+  const [role, setRole] = useState("Artist");
+  const [profileImage, setProfileImage] = useState("https://placehold.co/150x150");
+
   // Toggle follow/unfollow
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
@@ -33,6 +40,13 @@ function Profile() {
     setSavedEventIndex((prev) => (prev - 1 + sampleSavedEvents.length) % sampleSavedEvents.length);
   };
 
+  // Handle Profile Save
+  const handleSaveProfile = () => {
+    setIsEditModalOpen(false);
+    // Later can send this to backend API if have one
+    console.log("Updated profile:", { profileName, bio, role, profileImage });
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
 
@@ -41,7 +55,7 @@ function Profile() {
       <div className="bg-base-100 p-6 rounded-xl shadow-lg">
         <div className="flex items-center gap-6">
           <img
-            src="https://placehold.co/150x150"
+            src={profileImage}
             alt="Profile"
             className="rounded-full w-36 h-36 object-cover"
           />
@@ -54,21 +68,23 @@ function Profile() {
               <button className="btn btn-primary btn-sm" onClick={handleFollow}>
                 {isFollowing ? "Following" : "Follow"}
               </button>
-              <button className="btn btn-outline btn-sm">•••</button>
+              <button className="btn btn-outline btn-sm" onClick={() => setIsEditModalOpen(true)}>•••</button>
             </div>
           </div>
         </div>
 
-        {/* ----------------NAVIGATION TABS -------------- */}
+        {/* Followers/Following */}
         <div className="flex gap-8 mt-6 text-lg font-semibold">
           <p>Followers <span className="font-bold">{followers}</span></p>
           <p>Following <span className="font-bold">{following}</span></p>
         </div>
 
-        {/* ----------------BIO -------------- */}
+        {/* Bio */}
         <div className="mt-4 space-y-1 text-base">
-          <p>No bio yet...</p>
+          <p>{bio}</p>
         </div>
+
+
 
         {/* --------------- Navigation Tabs -------------- */}
         <div className="flex gap-6 mt-6 text-2xl">
@@ -144,6 +160,60 @@ function Profile() {
           <p>No saved events</p>
         )}
       </div>
+      {/* ====== EDIT PROFILE ====== */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-base-100 p-6 rounded-lg w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+
+            {/* Profile Image */}
+            <label className="block mb-2">Profile Image URL</label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4"
+              value={profileImage}
+              onChange={(e) => setProfileImage(e.target.value)}
+            />
+
+            {/* Name */}
+            <label className="block mb-2">Display Name</label>
+            <input
+              type="text"
+              className="input input-bordered w-full mb-4"
+              value={profileName}
+              onChange={(e) => setProfileName(e.target.value)}
+            />
+
+            {/* Role */}
+            <label className="block mb-2">Role</label>
+            <select
+              className="select select-bordered w-full mb-4"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option>Artist</option>
+              <option>Vendor</option>
+              <option>Participant</option>
+              <option>Other</option>
+            </select>
+
+            {/* Bio */}
+            <label className="block mb-2">Bio</label>
+            <textarea
+              className="textarea textarea-bordered w-full mb-4"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-3">
+              <button className="btn btn-outline" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleSaveProfile}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
