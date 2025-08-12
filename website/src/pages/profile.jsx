@@ -1,86 +1,57 @@
+// src/pages/Profile.jsx
 import { useEffect, useMemo, useState } from "react";
 import { FaCalendarAlt, FaPlus, FaPencilAlt, FaShoppingBag } from "react-icons/fa";
 import marketsData from "../data/markets.json";
-import { getBookmarks, clearBookmarks, BOOKMARKS_EVENT } from "../lib/bookmarks";
+import {
+  getBookmarks,
+  clearBookmarks,
+  BOOKMARKS_EVENT,
+  toggleBookmark as storeToggle,
+} from "../lib/bookmarks";
 
-// change later with API stuff
+/* ---- Demo calendar data (not related to bookmarks) ---- */
 const sampleEvents = [
   { id: 1, date: "2025-08-12", title: "SF Art Mart", time: "9:00 AM - 5:00 PM" },
-  { id: 2, date: "2025-08-15", title: "Berkeley Crafts Fair", time: "11:00 AM - 6:00 PM" }
+  { id: 2, date: "2025-08-15", title: "Berkeley Crafts Fair", time: "11:00 AM - 6:00 PM" },
 ];
 
-const sampleSavedEvents = [
-  { id: 1, title: "Urban Air Market", date: "2025-07-29", location: "San Pablo, CA", rating: 5, img: "https://placehold.co/400x300" },
-  { id: 2, title: "Artisan Festival", date: "2025-08-05", location: "Oakland, CA", rating: 4, img: "https://placehold.co/400x300" },
-  { id: 3, title: "Makers Market", date: "2025-08-10", location: "Berkeley, CA", rating: 5, img: "https://placehold.co/400x300" },
-  { id: 4, title: "Street Fair", date: "2025-08-20", location: "San Francisco, CA", rating: 3, img: "https://placehold.co/400x300" }
-];
-
-// SavedEventCard component to match your EventCard pattern
-function SavedEventCard({ event, isSelected, onSelect }) {
-  return (
-    <div 
-      className={`card bg-base-100 shadow-lg cursor-pointer transition-all duration-200 ${
-        isSelected ? 'ring-2 ring-primary' : 'hover:shadow-xl'
-      }`}
-      onClick={() => onSelect(event.id)}
-    >
-      <figure className="h-48">
-        <img
-          src={event.img}
-          alt={event.title}
-          className="object-cover w-full h-full"
-        />
-      </figure>
-      <div className="card-body p-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="badge badge-primary badge-sm">{event.date}</span>
-          <span className="text-yellow-500 text-sm">
-            {"★".repeat(event.rating)}
-          </span>
-        </div>
-        <h3 className="card-title text-lg">{event.title}</h3>
-        <p className="text-sm text-base-content/70">📍 {event.location}</p>
-      </div>
-    </div>
-  );
-}
-
-function Profile() {
+export default function Profile() {
   const [followers, setFollowers] = useState(0);
   const [following] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState("calendar");
   const [selectedSavedEventId, setSelectedSavedEventId] = useState(null);
 
-  // Edit Profile Modal State
+  // Edit Profile modal
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [profileName, setProfileName] = useState("New User");
   const [bio, setBio] = useState("No bio yet...");
   const [role, setRole] = useState("Artist");
   const [profileImage, setProfileImage] = useState("https://placehold.co/150x150");
 
-  // ---- Saved events from localStorage bookmarks ----
+  /* ===== Bookmarks: live-sync with localStorage (same helpers as Search) ===== */
   const [bookmarksVersion, setBookmarksVersion] = useState(0);
 
-  // live-sync when bookmarks change elsewhere (e.g., Search page)
+  // Listen for global bookmark changes (Search page, other tabs, etc.)
   useEffect(() => {
     const onChange = () => setBookmarksVersion(v => v + 1);
     window.addEventListener(BOOKMARKS_EVENT, onChange);
     return () => window.removeEventListener(BOOKMARKS_EVENT, onChange);
   }, []);
 
+  // IDs are normalized to strings in the helper; mirror that here
   const bookmarkedIds = useMemo(
-    () => new Set(getBookmarks().map(String)), // normalize to strings
+    () => new Set((getBookmarks() || []).map(String)),
     [bookmarksVersion]
   );
 
+  // Map IDs → full event objects from markets.json
   const bookmarkedEvents = useMemo(
-    () => marketsData.filter(m => bookmarkedIds.has(String(m.id))),
+    () => (marketsData || []).filter(m => bookmarkedIds.has(String(m.id))),
     [bookmarkedIds]
   );
 
-  // keep selected card valid if list shrinks
+  // Keep selection valid if list changes
   useEffect(() => {
     if (!bookmarkedEvents.length && selectedSavedEventId !== null) {
       setSelectedSavedEventId(null);
@@ -92,23 +63,24 @@ function Profile() {
     }
   }, [bookmarkedEvents, selectedSavedEventId]);
 
-  // Toggle follow/unfollow
   const handleFollow = () => {
-    setIsFollowing(!isFollowing);
-    setFollowers((prev) => (isFollowing ? prev - 1 : prev + 1));
+    setIsFollowing(f => !f);
+    setFollowers(prev => (isFollowing ? prev - 1 : prev + 1));
   };
 
-  // Handle Profile Save
   const handleSaveProfile = () => {
     setIsEditModalOpen(false);
-    // Later can send this to backend API if have one
     console.log("Updated profile:", { profileName, bio, role, profileImage });
+  };
+
+  const toggleFromProfile = (id) => {
+    // Uses same toggle as Search; will emit BOOKMARKS_EVENT
+    storeToggle(id);
   };
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
-
-      {/* ---------- PROFILE HEADER --------------- */}
+      {/* ---------- PROFILE HEADER ---------- */}
       <div className="bg-base-100 p-6 rounded-xl shadow-lg">
         <div className="flex items-center gap-6">
           <img
@@ -117,23 +89,31 @@ function Profile() {
             className="rounded-full w-36 h-36 object-cover"
           />
 
-          {/* -------------- PROFILE INFO -------------- */}
           <div>
-            <h1 className="text-3xl font-bold">New User</h1>
-            <p className="text-lg text-base-content/70">Artist</p>
+            <h1 className="text-3xl font-bold">{profileName}</h1>
+            <p className="text-lg text-base-content/70">{role}</p>
             <div className="mt-3 flex gap-2">
               <button className="btn btn-primary btn-sm" onClick={handleFollow}>
                 {isFollowing ? "Following" : "Follow"}
               </button>
-              <button className="btn btn-outline btn-sm" onClick={() => setIsEditModalOpen(true)}>•••</button>
+              <button
+                className="btn btn-outline btn-sm"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                •••
+              </button>
             </div>
           </div>
         </div>
 
         {/* Followers/Following */}
         <div className="flex gap-8 mt-6 text-lg font-semibold">
-          <p>Followers <span className="font-bold">{followers}</span></p>
-          <p>Following <span className="font-bold">{following}</span></p>
+          <p>
+            Followers <span className="font-bold">{followers}</span>
+          </p>
+          <p>
+            Following <span className="font-bold">{following}</span>
+          </p>
         </div>
 
         {/* Bio */}
@@ -141,28 +121,32 @@ function Profile() {
           <p>{bio}</p>
         </div>
 
-        {/* --------------- Navigation Tabs -------------- */}
+        {/* Nav Tabs */}
         <div className="flex gap-6 mt-6 text-2xl">
           <FaCalendarAlt
             className={`cursor-pointer ${activeTab === "calendar" ? "text-primary" : ""}`}
             onClick={() => setActiveTab("calendar")}
+            title="Calendar"
           />
           <FaPlus
             className={`cursor-pointer ${activeTab === "add" ? "text-primary" : ""}`}
             onClick={() => setActiveTab("add")}
+            title="Add"
           />
           <FaPencilAlt
             className={`cursor-pointer ${activeTab === "reviews" ? "text-primary" : ""}`}
             onClick={() => setActiveTab("reviews")}
+            title="Reviews"
           />
           <FaShoppingBag
             className={`cursor-pointer ${activeTab === "shop" ? "text-primary" : ""}`}
             onClick={() => setActiveTab("shop")}
+            title="Shop"
           />
         </div>
       </div>
 
-      {/* ====== Tab Content ====== */}
+      {/* ---------- TAB CONTENT ---------- */}
       <div className="bg-base-100 p-6 rounded-xl shadow-lg">
         {activeTab === "calendar" && (
           <div>
@@ -171,7 +155,9 @@ function Profile() {
               sampleEvents.map((event) => (
                 <div key={event.id} className="p-4 mb-2 border rounded-lg">
                   <p className="font-bold">{event.title}</p>
-                  <p>{event.date} • {event.time}</p>
+                  <p>
+                    {event.date} • {event.time}
+                  </p>
                 </div>
               ))
             ) : (
@@ -184,14 +170,14 @@ function Profile() {
         {activeTab === "shop" && <p>[Shop items will go here]</p>}
       </div>
 
-      {/* ====== Saved Events ====== */}
+      {/* ---------- SAVED (BOOKMARKED) EVENTS ---------- */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Saved Events</h2>
           {bookmarkedEvents.length > 0 && (
             <button
               className="btn btn-ghost btn-sm"
-              onClick={() => { clearBookmarks(); setBookmarksVersion(v => v + 1); }}
+              onClick={() => clearBookmarks()} // BOOKMARKS_EVENT will handle UI refresh
             >
               Clear all
             </button>
@@ -204,23 +190,61 @@ function Profile() {
               {bookmarkedEvents.map((ev) => (
                 <div key={ev.id} className="shrink-0 snap-start w-80">
                   <div
-                    className={`card bg-base-100 shadow cursor-pointer transition ${
-                      selectedSavedEventId === ev.id ? "ring-2 ring-primary" : "hover:shadow-md"
+                    className={`card bg-base-100 shadow relative transition cursor-pointer ${
+                      selectedSavedEventId === ev.id
+                        ? "ring-2 ring-primary"
+                        : "hover:shadow-md"
                     }`}
                     onClick={() => setSelectedSavedEventId(ev.id)}
                   >
                     <div className="card-body p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="card-title text-base line-clamp-2 mr-2">{ev.name}</h3>
+                      {/* Bookmark button - positioned in upper right */}
+                      <button
+                        type="button"
+                        className="absolute top-3 right-3 btn btn-ghost btn-xs btn-circle text-warning z-10"
+                        onClick={(e) => {
+                          e.stopPropagation(); // don't toggle selection
+                          toggleFromProfile(ev.id); // unbookmark → card disappears via event
+                        }}
+                        aria-label="Remove bookmark"
+                        title="Remove bookmark"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* Title */}
+                      <div className="pr-8 mb-2">
+                        <h3 className="card-title text-base line-clamp-2">{ev.name}</h3>
+                      </div>
+                      
+                      {/* Location */}
+                      <p className="opacity-80 text-sm line-clamp-2 mb-2">{ev.address}</p>
+                      
+                      {/* Date */}
+                      <div className="mb-2">
                         <span className="badge badge-outline text-xs">
-                          {new Date(ev.date).toLocaleDateString()}
+                          {ev.date ? new Date(ev.date).toLocaleDateString() : "Date TBA"}
                         </span>
                       </div>
-                      <p className="opacity-80 text-sm line-clamp-2">{ev.address}</p>
+
                       {ev.tags?.length ? (
                         <div className="mt-2 flex gap-1 flex-wrap">
-                          {ev.tags.slice(0, 3).map(t => (
-                            <span key={t} className="badge badge-sm">{t}</span>
+                          {ev.tags.slice(0, 3).map((t) => (
+                            <span key={t} className="badge badge-sm">
+                              {t}
+                            </span>
                           ))}
                         </div>
                       ) : null}
@@ -237,14 +261,12 @@ function Profile() {
         )}
       </div>
 
-
-      {/* ====== EDIT PROFILE ====== */}
+      {/* ---------- EDIT PROFILE MODAL ---------- */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-base-100 p-6 rounded-lg w-full max-w-md shadow-lg">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
 
-            {/* Profile Image */}
             <label className="block mb-2">Profile Image URL</label>
             <input
               type="text"
@@ -253,7 +275,6 @@ function Profile() {
               onChange={(e) => setProfileImage(e.target.value)}
             />
 
-            {/* Name */}
             <label className="block mb-2">Display Name</label>
             <input
               type="text"
@@ -262,7 +283,6 @@ function Profile() {
               onChange={(e) => setProfileName(e.target.value)}
             />
 
-            {/* Role */}
             <label className="block mb-2">Role</label>
             <select
               className="select select-bordered w-full mb-4"
@@ -275,7 +295,6 @@ function Profile() {
               <option>Other</option>
             </select>
 
-            {/* Bio */}
             <label className="block mb-2">Bio</label>
             <textarea
               className="textarea textarea-bordered w-full mb-4"
@@ -283,17 +302,20 @@ function Profile() {
               onChange={(e) => setBio(e.target.value)}
             />
 
-            {/* Buttons */}
             <div className="flex justify-end gap-3">
-              <button className="btn btn-outline" onClick={() => setIsEditModalOpen(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleSaveProfile}>Save</button>
+              <button
+                className="btn btn-outline"
+                onClick={() => setIsEditModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={handleSaveProfile}>
+                Save
+              </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }
-
-export default Profile;
