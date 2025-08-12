@@ -9,8 +9,8 @@ import {
   User,
   Clock,
   Bookmark,
-  ChevronDown,
   Plus,
+  Search,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -24,10 +24,38 @@ export default function Navbar() {
         <span className="text-xl font-bold text-gray-700">LOGO</span>
       </div>
 
-      {/* Pages Section */}
+      {/* Main Section */}
       <div className="mb-8">
-        <h3 className="text-sm font-medium text-gray-500 mb-4">Pages</h3>
+        <h3 className="text-sm font-medium text-gray-500 mb-4">Main</h3>
         <ul className="space-y-3">
+          <li>
+            <Link
+              to="/searchpage"
+              className="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              <label className="input">
+                <svg
+                  className="h-[1em] opacity-50"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <g
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2.5"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                  </g>
+                </svg>
+                <input type="search" className="grow" placeholder="Search" />
+                {/* <kbd className="kbd kbd-sm"></kbd>
+              <Search size={20} /> */}
+              </label>
+            </Link>
+          </li>
           <li>
             <Link
               to="/"

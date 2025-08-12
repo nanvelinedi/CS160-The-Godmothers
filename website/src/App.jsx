@@ -7,6 +7,7 @@ import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import Navbar from "./pages/navbar";
 import SubmitEvent from './pages/submitEvent';
+import SearchPage from './pages/searchpage';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/submit" element={<SubmitEvent />} />
+            <Route path="/searchpage" element={<SearchPage />} />
           </Routes>
         </div>
       </main>
