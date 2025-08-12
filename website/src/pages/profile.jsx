@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FaCalendarAlt, FaPlus, FaPencilAlt, FaShoppingBag } from "react-icons/fa";
+import marketsData from "../data/markets.json";
+import { getBookmarks, clearBookmarks, BOOKMARKS_EVENT } from "../lib/bookmarks";
 
 // change later with API stuff
 const sampleEvents = [
@@ -9,15 +11,47 @@ const sampleEvents = [
 
 const sampleSavedEvents = [
   { id: 1, title: "Urban Air Market", date: "2025-07-29", location: "San Pablo, CA", rating: 5, img: "https://placehold.co/400x300" },
-  { id: 2, title: "Artisan Festival", date: "2025-08-05", location: "Oakland, CA", rating: 4, img: "https://placehold.co/400x300" }
+  { id: 2, title: "Artisan Festival", date: "2025-08-05", location: "Oakland, CA", rating: 4, img: "https://placehold.co/400x300" },
+  { id: 3, title: "Makers Market", date: "2025-08-10", location: "Berkeley, CA", rating: 5, img: "https://placehold.co/400x300" },
+  { id: 4, title: "Street Fair", date: "2025-08-20", location: "San Francisco, CA", rating: 3, img: "https://placehold.co/400x300" }
 ];
+
+// SavedEventCard component to match your EventCard pattern
+function SavedEventCard({ event, isSelected, onSelect }) {
+  return (
+    <div 
+      className={`card bg-base-100 shadow-lg cursor-pointer transition-all duration-200 ${
+        isSelected ? 'ring-2 ring-primary' : 'hover:shadow-xl'
+      }`}
+      onClick={() => onSelect(event.id)}
+    >
+      <figure className="h-48">
+        <img
+          src={event.img}
+          alt={event.title}
+          className="object-cover w-full h-full"
+        />
+      </figure>
+      <div className="card-body p-4">
+        <div className="flex justify-between items-center mb-2">
+          <span className="badge badge-primary badge-sm">{event.date}</span>
+          <span className="text-yellow-500 text-sm">
+            {"★".repeat(event.rating)}
+          </span>
+        </div>
+        <h3 className="card-title text-lg">{event.title}</h3>
+        <p className="text-sm text-base-content/70">📍 {event.location}</p>
+      </div>
+    </div>
+  );
+}
 
 function Profile() {
   const [followers, setFollowers] = useState(0);
   const [following] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState("calendar");
-  const [savedEventIndex, setSavedEventIndex] = useState(0);
+  const [selectedSavedEventId, setSelectedSavedEventId] = useState(null);
 
   // Edit Profile Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -26,18 +60,42 @@ function Profile() {
   const [role, setRole] = useState("Artist");
   const [profileImage, setProfileImage] = useState("https://placehold.co/150x150");
 
+  // ---- Saved events from localStorage bookmarks ----
+  const [bookmarksVersion, setBookmarksVersion] = useState(0);
+
+  // live-sync when bookmarks change elsewhere (e.g., Search page)
+  useEffect(() => {
+    const onChange = () => setBookmarksVersion(v => v + 1);
+    window.addEventListener(BOOKMARKS_EVENT, onChange);
+    return () => window.removeEventListener(BOOKMARKS_EVENT, onChange);
+  }, []);
+
+  const bookmarkedIds = useMemo(
+    () => new Set(getBookmarks().map(String)), // normalize to strings
+    [bookmarksVersion]
+  );
+
+  const bookmarkedEvents = useMemo(
+    () => marketsData.filter(m => bookmarkedIds.has(String(m.id))),
+    [bookmarkedIds]
+  );
+
+  // keep selected card valid if list shrinks
+  useEffect(() => {
+    if (!bookmarkedEvents.length && selectedSavedEventId !== null) {
+      setSelectedSavedEventId(null);
+    } else if (
+      selectedSavedEventId !== null &&
+      !bookmarkedEvents.some(e => String(e.id) === String(selectedSavedEventId))
+    ) {
+      setSelectedSavedEventId(null);
+    }
+  }, [bookmarkedEvents, selectedSavedEventId]);
+
   // Toggle follow/unfollow
   const handleFollow = () => {
     setIsFollowing(!isFollowing);
     setFollowers((prev) => (isFollowing ? prev - 1 : prev + 1));
-  };
-
-  // swipe navigation for saved events 
-  const handleNextSavedEvent = () => {
-    setSavedEventIndex((prev) => (prev + 1) % sampleSavedEvents.length);
-  };
-  const handlePrevSavedEvent = () => {
-    setSavedEventIndex((prev) => (prev - 1 + sampleSavedEvents.length) % sampleSavedEvents.length);
   };
 
   // Handle Profile Save
@@ -49,7 +107,6 @@ function Profile() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8">
-
 
       {/* ---------- PROFILE HEADER --------------- */}
       <div className="bg-base-100 p-6 rounded-xl shadow-lg">
@@ -83,8 +140,6 @@ function Profile() {
         <div className="mt-4 space-y-1 text-base">
           <p>{bio}</p>
         </div>
-
-
 
         {/* --------------- Navigation Tabs -------------- */}
         <div className="flex gap-6 mt-6 text-2xl">
@@ -129,37 +184,60 @@ function Profile() {
         {activeTab === "shop" && <p>[Shop items will go here]</p>}
       </div>
 
-      {/* ====== Saved Events Swipe ====== */}
+      {/* ====== Saved Events ====== */}
       <div>
-        <h2 className="text-xl font-bold mb-4">Saved Events</h2>
-        {sampleSavedEvents.length > 0 ? (
-          <div className="flex items-center gap-4">
-            <button className="btn btn-outline btn-sm" onClick={handlePrevSavedEvent}>◀</button>
-            <div className="card card-side bg-base-100 shadow-lg w-full max-w-3xl">
-              <figure className="w-48 h-48">
-                <img
-                  src={sampleSavedEvents[savedEventIndex].img}
-                  alt={sampleSavedEvents[savedEventIndex].title}
-                  className="object-cover w-full h-full"
-                />
-              </figure>
-              <div className="card-body">
-                <div className="flex justify-between items-center">
-                  <span className="badge badge-lg">{sampleSavedEvents[savedEventIndex].date}</span>
-                  <span className="text-yellow-500">
-                    {"★".repeat(sampleSavedEvents[savedEventIndex].rating)}
-                  </span>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold">Saved Events</h2>
+          {bookmarkedEvents.length > 0 && (
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => { clearBookmarks(); setBookmarksVersion(v => v + 1); }}
+            >
+              Clear all
+            </button>
+          )}
+        </div>
+
+        {bookmarkedEvents.length > 0 ? (
+          <div className="max-w-[900px] w-[900px] overflow-x-auto mx-auto rounded-box bg-base-100 shadow p-2">
+            <div className="flex gap-4 snap-x snap-mandatory">
+              {bookmarkedEvents.map((ev) => (
+                <div key={ev.id} className="shrink-0 snap-start w-80">
+                  <div
+                    className={`card bg-base-100 shadow cursor-pointer transition ${
+                      selectedSavedEventId === ev.id ? "ring-2 ring-primary" : "hover:shadow-md"
+                    }`}
+                    onClick={() => setSelectedSavedEventId(ev.id)}
+                  >
+                    <div className="card-body p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="card-title text-base line-clamp-2 mr-2">{ev.name}</h3>
+                        <span className="badge badge-outline text-xs">
+                          {new Date(ev.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="opacity-80 text-sm line-clamp-2">{ev.address}</p>
+                      {ev.tags?.length ? (
+                        <div className="mt-2 flex gap-1 flex-wrap">
+                          {ev.tags.slice(0, 3).map(t => (
+                            <span key={t} className="badge badge-sm">{t}</span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
-                <h3 className="card-title">{sampleSavedEvents[savedEventIndex].title}</h3>
-                <p className="text-sm text-base-content/70">📍 {sampleSavedEvents[savedEventIndex].location}</p>
-              </div>
+              ))}
             </div>
-            <button className="btn btn-outline btn-sm" onClick={handleNextSavedEvent}>▶</button>
           </div>
         ) : (
-          <p>No saved events</p>
+          <div className="alert">
+            <span>No saved events yet. Go bookmark some from the Explorer!</span>
+          </div>
         )}
       </div>
+
+
       {/* ====== EDIT PROFILE ====== */}
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
