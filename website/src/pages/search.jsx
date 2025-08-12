@@ -255,7 +255,30 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
           <div className="space-y-4">
             <div className="flex justify-between items-start">
               <h4 className="font-bold text-lg flex-1 pr-2">{event.name}</h4>
-              <button className="btn btn-ghost btn-xs btn-circle" onClick={() => setShowPopup(false)}>✕</button>
+              <div className="flex items-center gap-1">
+                <button
+                  className={`btn btn-ghost btn-xs btn-circle ${isBookmarked ? 'text-warning' : 'opacity-60 hover:opacity-100'}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onBookmark(event.id);
+                  }}
+                  aria-label={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+                  title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+                >
+                  <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                </button>
+
+                <button
+                  className="btn btn-ghost btn-xs btn-circle"
+                  onClick={() => setShowPopup(false)}
+                  aria-label="Close"
+                  title="Close"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-1">
@@ -493,32 +516,46 @@ export default function Search() {
   };
 
   // update radius + origin + events when deps change
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+ // update radius + origin + events when deps change
+useEffect(() => {
+  const map = mapRef.current;
+  if (!map || !map.isStyleLoaded()) return;
 
-    const radiusSource = map.getSource("amf-radius");
-    if (radiusSource) radiusSource.setData(makeCircle(origin, radiusKm));
+  const radiusSource = map.getSource("amf-radius");
+  if (radiusSource) radiusSource.setData(makeCircle(origin, radiusKm));
 
-    const originSource = map.getSource("amf-origin");
-    if (originSource) originSource.setData({
-      type: "Feature",
-      geometry: { type: "Point", coordinates: origin },
-      properties: {}
-    });
+  const originSource = map.getSource("amf-origin");
+  if (originSource) originSource.setData({
+    type: "Feature",
+    geometry: { type: "Point", coordinates: origin },
+    properties: {}
+  });
 
-    updateEventsOnMap(map, filtered, selectedId);
-  }, [origin, radiusKm, filtered, selectedId]);
+  updateEventsOnMap(map, filtered, selectedId);
+
+  // zoom to new bounds when radius changes
+  const bounds = boundsFromPolygon(makeCircle(origin, radiusKm));
+  map.fitBounds(bounds, { padding: 80, duration: 600 });
+
+}, [origin, radiusKm, filtered, selectedId]);
+
 
   // fit to circle when radius changes
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
-    setTimeout(() => {
-      const b = boundsFromPolygon(makeCircle(origin, radiusKm));
-      map.fitBounds(b, { padding: 80, duration: 600 });
-    }, 100);
-  }, [radiusKm]);
+
+    // Update the radius circle on the map first
+    const radiusSource = map.getSource("amf-radius");
+    if (radiusSource) {
+      radiusSource.setData(makeCircle(origin, radiusKm));
+    }
+
+    // Then fit to the updated circle
+    const bounds = boundsFromPolygon(makeCircle(origin, radiusKm));
+    map.fitBounds(bounds, { padding: 80, duration: 600 });
+  }, [origin, radiusKm]);
+
 
   function useMyLocation() {
     if (!navigator.geolocation) return alert("Geolocation not supported on this device.");

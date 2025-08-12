@@ -466,7 +466,7 @@ export default function SubmitEvent() {
               </div>
 
               {/* Submit Button */}
-              <div className="form-control mt-8">
+              <div className="form-control mt-8 flex justify-center">
                 <button
                   type="submit"
                   className={`btn btn-primary btn-lg ${isSubmitting ? 'loading' : ''}`}
