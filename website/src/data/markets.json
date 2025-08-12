@@ -16,5 +16,77 @@
     "lng": -87.65,
     "date": "2025-09-10",
     "tags": ["ceramics","prints"]
+  },
+  {
+    "id": "berkeley-art-walk",
+    "name": "Downtown Berkeley Art Walk",
+    "address": "Shattuck Ave, Berkeley, CA",
+    "date": "2025-09-14",
+    "tags": ["handmade", "paintings"],
+    "lat": 37.8719,
+    "lng": -122.2687
+  },
+  {
+    "id": "oakland-makers-market",
+    "name": "Oakland Makers Market",
+    "address": "Jack London Square, Oakland, CA",
+    "date": "2025-09-21",
+    "tags": ["ceramics", "prints"],
+    "lat": 37.7952,
+    "lng": -122.2772
+  },
+  {
+    "id": "bay-street-artisan-fair",
+    "name": "Bay Street Artisan Fair",
+    "address": "San Francisco Bay Area, CA",
+    "date": "2025-09-19",
+    "tags": ["vintage", "handmade"],
+    "lat": 37.735162,
+    "lng": -122.285434
+  },
+  {
+    "id": "mission-district-street-fair",
+    "name": "Mission District Street Fair",
+    "address": "San Francisco Bay Area, CA",
+    "date": "2025-10-27",
+    "tags": ["music", "food"],
+    "lat": 37.856266,
+    "lng": -122.410562
+  },
+  {
+    "id": "oakland-first-friday-special",
+    "name": "Oakland First Friday Special",
+    "address": "San Francisco Bay Area, CA",
+    "date": "2025-09-16",
+    "tags": ["craft", "art"],
+    "lat": 37.709242,
+    "lng": -122.29083
+  },
+  {
+    "id": "castro-street-pop-up-gallery",
+    "name": "Castro Street Pop-Up Gallery",
+    "address": "San Francisco Bay Area, CA",
+    "date": "2025-12-13",
+    "tags": ["queer", "art"],
+    "lat": 37.766434,
+    "lng": -122.541994
+  },
+  {
+    "id": "yerba-buena-art-walk",
+    "name": "Yerba Buena Art Walk",
+    "address": "San Francisco Bay Area, CA",
+    "date": "2025-11-18",
+    "tags": ["vintage", "handmade"],
+    "lat": 37.894644,
+    "lng": -122.392886
+  },
+  {
+    "id": "union-square-holiday-market",
+    "name": "Union Square Holiday Market",
+    "address": "San Francisco Bay Area, CA",
+    "date": "2025-09-21",
+    "tags": ["music", "food"],
+    "lat": 37.779931,
+    "lng": -122.319488
   }
 ]

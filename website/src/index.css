@@ -1,3 +1,7 @@
+/* ───── Mapbox core CSS ───── */
+@import "mapbox-gl/dist/mapbox-gl.css";
+@import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+
 /* ───── Tailwind & DaisyUI (Tailwind v4 syntax) ───── */
 @import "tailwindcss";
 @plugin "daisyui";
@@ -5,11 +9,6 @@
 @plugin "daisyui" {
   themes: retro --default, light, dark;
 }
-
-/* ───── Mapbox core CSS ───── */
-@import "mapbox-gl/dist/mapbox-gl.css";
-@import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
 /* ──────────────────────────────────────────────── */
 /* Geocoder pill (control) */
 .amf-geocoder .mapboxgl-ctrl-geocoder {
@@ -93,5 +92,17 @@
 /* optional separators */
 .amf-geocoder .suggestions>li:not(:last-child)>a {
   border-bottom: 1px solid oklch(var(--b3));
+}
+
+@layer base {
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow-x: hidden;
+    /* keep this */
+    /* remove width/max-width here */
+  }
 }
 
