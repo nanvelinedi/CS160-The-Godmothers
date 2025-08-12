@@ -6,6 +6,8 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import Navbar from "./pages/navbar";
+import SubmitEvent from './pages/submitEvent';
+
 
 export default function App() {
   // const username = "John"; // Define the variable here
@@ -22,6 +24,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/submit" element={<SubmitEvent />} />
         </Routes>
       </div>
     </div>

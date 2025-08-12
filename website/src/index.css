@@ -95,3 +95,15 @@
   border-bottom: 1px solid oklch(var(--b3));
 }
 
+@layer base {
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    /* hard stop */
+  }
+}
+
