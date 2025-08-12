@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import marketsData from "../data/markets.json";
+import { getBookmarks, toggleBookmark as storeToggle, BOOKMARKS_EVENT } from "../lib/bookmarks";
+
 
 // Map config
 mapboxgl.accessToken =
@@ -358,7 +360,7 @@ export default function Search() {
   const [origin, setOrigin] = useState(DEFAULT_ORIGIN);   // [lng, lat]
   const [radiusKm, setRadiusKm] = useState(10);
   const [selectedId, setSelectedId] = useState(null);
-  const [bookmarkedIds, setBookmarkedIds] = useState(new Set());
+  const [bookmarkedIds, setBookmarkedIds] = useState(() => new Set(getBookmarks()));
 
   const filtered = useMemo(
     () => marketsData.filter(m => haversineKm(origin, [m.lng, m.lat]) <= radiusKm),
@@ -366,12 +368,16 @@ export default function Search() {
   );
 
   const toggleBookmark = (eventId) => {
-    setBookmarkedIds(prev => {
-      const next = new Set(prev);
-      next.has(eventId) ? next.delete(eventId) : next.add(eventId);
-      return next;
-    });
+    const next = storeToggle(eventId);      // returns array of strings
+    setBookmarkedIds(new Set(next));        // keep Set locally for fast lookup
   };
+
+  useEffect(() => {
+    const onChange = () => setBookmarkedIds(new Set(getBookmarks()));
+    window.addEventListener(BOOKMARKS_EVENT, onChange);
+    return () => window.removeEventListener(BOOKMARKS_EVENT, onChange);
+  }, []);
+
 
   // --- Carousel refs/state ---
   const carouselRef = useRef(null);
@@ -624,28 +630,27 @@ useEffect(() => {
     {/* Carousel container: keeps overflow inside itself */}
     {/* Results list — EXACT daisyUI carousel */}
     {/* Results list — pure Tailwind horizontal scroller */}
-<div className="max-w-[900px] w-[900px] overflow-x-auto mx-auto rounded-box bg-base-100 shadow p-2">
-  <div className="flex gap-4 snap-x snap-mandatory">
-    {filtered.map((m) => (
-      <div
-        key={m.id}
-        className="shrink-0 snap-start w-80"
-      >
-        <EventCard
-          event={m}
-          isSelected={selectedId === m.id}
-          onSelect={(id) => {
-            setSelectedId(id);
-            mapRef.current?.flyTo({ center: [m.lng, m.lat], zoom: 13, duration: 800 });
-          }}
-          onBookmark={toggleBookmark}
-          isBookmarked={bookmarkedIds.has(m.id)}
-        />
+    <div className="max-w-[900px] w-[900px] overflow-x-auto mx-auto rounded-box bg-base-100 shadow p-2">
+      <div className="flex gap-4 snap-x snap-mandatory">
+        {filtered.map((m) => (
+          <div
+            key={m.id}
+            className="shrink-0 snap-start w-80"
+          >
+            <EventCard
+              event={m}
+              isSelected={selectedId === m.id}
+              onSelect={(id) => {
+                setSelectedId(id);
+                mapRef.current?.flyTo({ center: [m.lng, m.lat], zoom: 13, duration: 800 });
+              }}
+              onBookmark={toggleBookmark}
+              isBookmarked={bookmarkedIds.has(String(m.id))}
+            />
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-</div>
-
+    </div>
   </div>
 );
 }

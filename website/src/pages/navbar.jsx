@@ -4,7 +4,7 @@ import { Home, Compass, Bell, ShoppingBag, Hammer, User, Clock, Bookmark, Chevro
 
 export default function Navbar() {
   return (
-    <aside className="w-64 bg-base-100 p-6 flex flex-col min-h-screen">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-base-100 p-6 flex flex-col">
       {/* Logo */}
       <div className="flex items-center gap-2 mb-8">
         <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
@@ -91,6 +91,16 @@ export default function Navbar() {
           </div>
           <span>New Post</span>
         </button>
+      </div>
+
+      {/* Discrete Admin Login at the very bottom-left */}
+      <div className="mt-auto pt-6 border-t border-base-200 self-start">
+        <Link
+        to="/login"
+        className="absolute left-0 bottom-0 m-4 text-sm font-medium text-primary hover:underline"
+      >
+        Admin
+      </Link>
       </div>
     </aside>
   );
