@@ -1,7 +1,7 @@
 // src/pages/profile.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaPlus } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
 import marketsData from "../data/markets.json";
 import { getAllPosts, POSTS_EVENT } from "../lib/postStore";
 import {
@@ -178,53 +178,58 @@ export default function Profile() {
               {/* Event list */}
               <div className="flex-1 space-y-4 border-l-4 border-primary pl-6">
                 {upcomingEvents.map((event) => (
-                  <div
+                  <Link
                     key={event.id}
-                    className="flex items-center gap-4 bg-base-100 border rounded-xl shadow-sm p-2"
+                    to={`/event/${event.id}`} // <-- make sure this matches your route
+                    className="block"
                   >
-                    {/* Smaller date box */}
-                    <div className="flex flex-col items-center justify-center w-20 h-20 bg-base-200 rounded-2xl">
-                      <div className="text-xl font-extrabold text-primary">
-                        {new Date(event.date).getDate()}
+                    <div className="flex items-center gap-4 bg-base-100 border rounded-xl shadow-sm p-2 hover:shadow-md transition cursor-pointer">
+                      {/* Smaller date box */}
+                      <div className="flex flex-col items-center justify-center w-20 h-20 bg-base-200 rounded-2xl">
+                        <div className="text-xl font-extrabold text-primary">
+                          {new Date(event.date).getDate()}
+                        </div>
+                        <div className="uppercase text-xs font-bold text-primary">
+                          {new Date(event.date).toLocaleString("en-US", {
+                            month: "short",
+                          })}
+                        </div>
+                        <div className="text-[10px] text-base-content/70">
+                          {new Date(event.date).getFullYear()}
+                        </div>
                       </div>
-                      <div className="uppercase text-xs font-bold text-primary">
-                        {new Date(event.date).toLocaleString("en-US", {
-                          month: "short",
-                        })}
-                      </div>
-                      <div className="text-[10px] text-base-content/70">
-                        {new Date(event.date).getFullYear()}
+                      {event.martimagIMG && (
+                        <img
+                          src={event.martimagIMG}
+                          alt={event.name}
+                          className="w-24 h-16 object-cover rounded-lg border border-base-300"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold truncate">
+                          {event.name}
+                        </div>
+                        <div className="text-xs opacity-70">
+                          {event.location} •{" "}
+                          {new Date(event.date).toLocaleDateString()}
+                        </div>
+                        {event.description && (
+                          <div className="text-xs opacity-60 truncate">
+                            {event.description}
+                          </div>
+                        )}
+                        {event.tags && (
+                          <div className="flex gap-1 mt-1 flex-wrap">
+                            {event.tags.slice(0, 3).map((tag) => (
+                              <span key={tag} className="badge badge-xs">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
-                    {event.martimagIMG && (
-                      <img
-                        src={event.martimagIMG}
-                        alt={event.name}
-                        className="w-24 h-16 object-cover rounded-lg border border-base-300"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="font-semibold truncate">{event.name}</div>
-                      <div className="text-xs opacity-70">
-                        {event.location} •{" "}
-                        {new Date(event.date).toLocaleDateString()}
-                      </div>
-                      {event.description && (
-                        <div className="text-xs opacity-60 truncate">
-                          {event.description}
-                        </div>
-                      )}
-                      {event.tags && (
-                        <div className="flex gap-1 mt-1 flex-wrap">
-                          {event.tags.slice(0, 3).map((tag) => (
-                            <span key={tag} className="badge badge-xs">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
@@ -316,7 +321,7 @@ export default function Profile() {
               {myPosts.map((p) => (
                 <Link
                   key={p.id}
-                  to={`/post/${p.id}`}
+                  to="/mart1-wizard"
                   className="block aspect-square overflow-hidden rounded-xl border hover:ring hover:ring-primary/30"
                 >
                   {p.images?.[0] ? (
