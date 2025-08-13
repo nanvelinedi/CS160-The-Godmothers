@@ -7,7 +7,7 @@ const ARTISTS = [
     name: "Luna Sketches",
     bio: "I’m Luna, a 27-year-old illustrator from San Francisco who loves blending dreamy fantasy with everyday city life in my art. I grew up sketching in every corner of the Bay, inspired by street art, foggy mornings, and colorful markets. These days, I work mostly in digital but still love the feel of pen and watercolor, creating pieces that capture magic in the mundane. When I’m not drawing, you’ll probably find me wandering Golden Gate Park, browsing art fairs, or hanging out with my cat, Mochi, who insists on being part of every livestream.",
     profileUrl: "blah", // <--- link to profile page (route or file)
-    avatarIMG: "src/images/pfp1.png",
+    avatarIMG: "../public/pfp1.png",
     tags: ["fantasy", "magic", "harry potter", "wizard"],
     posts: [
       {
@@ -15,7 +15,7 @@ const ARTISTS = [
         title: "The Harry Potter Trio",
         postUrl: "/posts/spellbound-market-poster", // <--- link to post page
         description: "i love the trio so much",
-        imagIMG: "src/images/harrypotterart.png",
+        imagIMG: "../public/harrypotterart.png",
         tags: ["poster", "harry potter", "hogwarts", "magic", "wizard"],
       },
     ],
@@ -23,7 +23,7 @@ const ARTISTS = [
       {
         id: "m1",
         martUrl: "/marts/wizarding-art-mart", // <--- link to mart page
-        martimagIMG: "src/images/hpmart.jpg", // <--- mart header image (rectangle, short)
+        martimagIMG: "../public/hpmart.jpg", // <--- mart header image (rectangle, short)
         name: "Wizarding Art Mart",
         location: "Berkeley",
         date: "2025-10-01",
@@ -37,7 +37,7 @@ const ARTISTS = [
     name: "Pixel Piper",
     bio: "I’m Pixel, a 23-year-old artist who’s absolutely obsessed with drawing chibi animals, adorable characters, and all things cute. My style is playful, colorful, and full of tiny details that make people smile—whether it’s a sleepy cat in a teacup or a penguin in a hoodie. I work mostly in digital, but I still doodle in my sketchbook whenever inspiration strikes (which is pretty much all the time). When I’m not drawing, I’m usually cuddling my pets, collecting plushies, or hunting for cute cafés that feel straight out of an anime.",
     profileUrl: "/artists/pixel-piper",
-    avatarIMG: "src/images/pfp2.png",
+    avatarIMG: "../public/pfp2.png",
     tags: ["digital", "games", "rpg", "hogwarts", "wizard"],
     posts: [
       {
@@ -45,7 +45,7 @@ const ARTISTS = [
         title: "Cute Chibi Cats",
         postUrl: "/posts/nimbus-2000-mock-ad",
         description: "lol i got bored so i drew my cats i love them",
-        imagIMG: "src/images/cute chibi art.jpg",
+        imagIMG: "../public/cute chibi art.jpg",
         tags: ["retro", "broom", "quidditch", "wizard"],
       },
     ],
@@ -53,7 +53,7 @@ const ARTISTS = [
       {
         id: "m2",
         martUrl: "/marts/arcade-alley-pop-up",
-        martimagIMG: "src/images/artmart2.jpg",
+        martimagIMG: "../public/artmart2.jpg",
         name: "Cute Animal Art Mart",
         location: "Oakland",
         date: "2025-09-20",
@@ -67,7 +67,7 @@ const ARTISTS = [
     name: "Theo Ink",
     bio: "I’m Theo, a 26-year-old illustrator who loves creating simple, clean designs using basic colors and minimal details. My art is all about capturing a feeling or story in the most straightforward, charming way possible—kind of like visual comfort food. Right now, I’m traveling through Italy, soaking up inspiration from sunlit streets, historic architecture, and the slow, beautiful pace of life here. When I’m not sketching, you’ll find me people-watching at cafés, exploring tiny art shops, or tasting every flavor of gelato I can find.",
     profileUrl: "/artists/theo-ink",
-    avatarIMG: "src/images/pfp3.png",
+    avatarIMG: "../public/pfp3.png",
     tags: ["maps", "castles", "creatures", "wizard"],
     posts: [
       {
@@ -75,7 +75,7 @@ const ARTISTS = [
         title: "San Francisco Vibes",
         postUrl: "/posts/map-of-a-certain-school",
         description: "mmm sf is so pretty",
-        imagIMG: "src/images/sfimage.jpg",
+        imagIMG: "../public/sfimage.jpg",
         tags: ["map", "school", "wizard", "marauder", "wizard"],
       },
     ],
@@ -83,7 +83,7 @@ const ARTISTS = [
       {
         id: "m3",
         martUrl: "/marts/old-town-makers-market",
-        martimagIMG: "src/images/artmart3.jpg",
+        martimagIMG: "../public/artmart3.jpg",
         name: "San Francisco Art Mart",
         location: "San Francisco",
         date: "2025-11-05",
