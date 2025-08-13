@@ -22,7 +22,7 @@ export const ARTISTS = [
     marts: [
       {
         id: "m1",
-        martUrl: "/marts/wizarding-art-mart", // <--- link to mart page
+        martUrl: "/mart1-wizard", // <--- link to mart page
         martimagIMG: "../public/hpmart.jpg", // <--- mart header image (rectangle, short)
         name: "Wizarding Art Mart",
         location: "Berkeley",

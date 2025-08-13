@@ -13,17 +13,12 @@ import NewPost from "./pages/NewPost";
 import PostDetail from "./pages/PostDetail";
 import DevPostsJson from "./pages/DevPostsJson";
 import AdminPage from "./pages/AdminPage.jsx";
-{
-  /* profiles */
-}
+/* profiles */
 import LunaPfp from "./profiles/lunapfp.jsx";
-{
-  /* posts */
-}
+/* posts */
 import Post1HP from "./artposts/post1-hp.jsx";
-{
-  /* marts */
-}
+/* marts */
+import Mart1Wizard from "./artmarts/mart1-wizard.jsx";
 
 export default function App() {
   return (
@@ -50,6 +45,7 @@ export default function App() {
             {/* posts */}
             <Route path="/post1-hp" element={<Post1HP />} />
             {/* marts */}
+            <Route path="/mart1-wizard" element={<Mart1Wizard />} />
           </Routes>
         </div>
       </main>
