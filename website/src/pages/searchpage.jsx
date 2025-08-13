@@ -13,22 +13,22 @@ export const ARTISTS = [
       {
         id: "p1",
         title: "The Harry Potter Trio",
-        postUrl: "/post1-hp", // <--- link to post page
+        postUrl: "/posts/spellbound-market-poster", // <--- link to post page
         description: "i love the trio so much",
-        imagIMG: "../public/harrypotterart.png",
-        tags: ["poster", "harry potter", "hogwarts", "magic", "art"],
+        imagIMG: "src/images/harrypotterart.png",
+        tags: ["poster", "harry potter", "hogwarts", "magic", "wizard"],
       },
     ],
     marts: [
       {
         id: "m1",
         martUrl: "/marts/wizarding-art-mart", // <--- link to mart page
-        martimagIMG: "../public/hpmart.jpg", // <--- mart header image (rectangle, short)
+        martimagIMG: "src/images/hpmart.jpg", // <--- mart header image (rectangle, short)
         name: "Wizarding Art Mart",
         location: "Berkeley",
         date: "2025-10-01",
         description: "Vendors with HP-inspired art & props.",
-        tags: ["market", "harry potter", "fantasy", "art", "wizard"],
+        tags: ["market", "harry potter", "fantasy", "props", "wizard"],
       },
     ],
   },
@@ -37,28 +37,28 @@ export const ARTISTS = [
     name: "Pixel Piper",
     bio: "I’m Pixel, a 23-year-old artist who’s absolutely obsessed with drawing chibi animals, adorable characters, and all things cute. My style is playful, colorful, and full of tiny details that make people smile—whether it’s a sleepy cat in a teacup or a penguin in a hoodie. I work mostly in digital, but I still doodle in my sketchbook whenever inspiration strikes (which is pretty much all the time). When I’m not drawing, I’m usually cuddling my pets, collecting plushies, or hunting for cute cafés that feel straight out of an anime.",
     profileUrl: "/artists/pixel-piper",
-    avatarIMG: "../public/pfp2.png",
-    tags: ["art", "animals", "kawaii", "chibi", "cute"],
+    avatarIMG: "src/images/pfp2.png",
+    tags: ["digital", "games", "rpg", "hogwarts", "wizard"],
     posts: [
       {
         id: "p2",
         title: "Cute Chibi Cats",
         postUrl: "/posts/nimbus-2000-mock-ad",
         description: "lol i got bored so i drew my cats i love them",
-        imagIMG: "../public/cute chibi art.jpg",
-        tags: ["cute", "animals", "cats", "sketch", "art"],
+        imagIMG: "src/images/cute chibi art.jpg",
+        tags: ["retro", "broom", "quidditch", "wizard"],
       },
     ],
     marts: [
       {
         id: "m2",
         martUrl: "/marts/arcade-alley-pop-up",
-        martimagIMG: "../public/artmart2.jpg",
+        martimagIMG: "src/images/artmart2.jpg",
         name: "Cute Animal Art Mart",
         location: "Oakland",
         date: "2025-09-20",
         description: "Indie prints and wizard-world fan art.",
-        tags: ["animals", "cute", "chibi", "adorable", "art"],
+        tags: ["indie", "fan art", "harry potter", "wizard"],
       },
     ],
   },
@@ -67,28 +67,28 @@ export const ARTISTS = [
     name: "Theo Ink",
     bio: "I’m Theo, a 26-year-old illustrator who loves creating simple, clean designs using basic colors and minimal details. My art is all about capturing a feeling or story in the most straightforward, charming way possible—kind of like visual comfort food. Right now, I’m traveling through Italy, soaking up inspiration from sunlit streets, historic architecture, and the slow, beautiful pace of life here. When I’m not sketching, you’ll find me people-watching at cafés, exploring tiny art shops, or tasting every flavor of gelato I can find.",
     profileUrl: "/artists/theo-ink",
-    avatarIMG: "../public/pfp3.png",
-    tags: ["maps", "castles", "creatures", "art"],
+    avatarIMG: "src/images/pfp3.png",
+    tags: ["maps", "castles", "creatures", "wizard"],
     posts: [
       {
         id: "p3",
         title: "San Francisco Vibes",
         postUrl: "/posts/map-of-a-certain-school",
         description: "mmm sf is so pretty",
-        imagIMG: "../public/sfimage.jpg",
-        tags: ["map", "hangout", "sf", "chill", "art"],
+        imagIMG: "src/images/sfimage.jpg",
+        tags: ["map", "school", "wizard", "marauder", "wizard"],
       },
     ],
     marts: [
       {
         id: "m3",
         martUrl: "/marts/old-town-makers-market",
-        martimagIMG: "../public/artmart3.jpg",
+        martimagIMG: "src/images/artmart3.jpg",
         name: "San Francisco Art Mart",
         location: "San Francisco",
         date: "2025-11-05",
         description: "Hand-drawn prints, magical maps.",
-        tags: ["hand-drawn", "maps", "sf", "art"],
+        tags: ["hand-drawn", "maps", "magic", "wizard"],
       },
     ],
   },
@@ -127,7 +127,6 @@ const flattenMarts = (artists) =>
 
 // =============== UI bits (daisyUI) ==================
 function truncateText(text, maxLength) {
-  if (!text) return "";
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
 }
@@ -176,7 +175,7 @@ function ArtistCard({ name, bio, tags, avatarUrl, profileUrl }) {
             <div>
               <h3 className="card-title text-base">{name}</h3>
               {bio && (
-                <p className="text-sm opacity-80">{truncateText(bio, 120)}</p>
+                <p className="text-sm opacity-80">{truncateText(bio, 50)}</p>
               )}
             </div>
           </div>
@@ -309,9 +308,7 @@ function Spinner({ label = "Searching…" }) {
 export default function SearchPageRetroWithMartImages() {
   const [input, setInput] = useState("");
   const [appliedQ, setAppliedQ] = useState("");
-  const [apiResponse, setApiResponse] = useState(""); // API text
-  const [apiLoading, setApiLoading] = useState(false); // API loading
-  const [loading, setLoading] = useState(false); // fake 2s local loading
+  const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const timeoutRef = useRef(null);
 
@@ -373,41 +370,10 @@ export default function SearchPageRetroWithMartImages() {
     );
   }, [tokens]);
 
-  async function callReagentAPI(searchValue) {
-    try {
-      setApiLoading(true);
-      setApiResponse("");
-      const res = await fetch(
-        "https://noggin.rea.gent/sophisticated-horse-4983",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization:
-              "Bearer rg_v1_5mazncz9xkl4jd6vcbrvjiup9aj88aq6tw1r_ngk",
-          },
-          body: JSON.stringify({
-            var1: searchValue, // set var1 to search bar input
-          }),
-        }
-      );
-      const text = await res.text();
-      setApiResponse(text || "(empty response)");
-    } catch (err) {
-      console.error("Error fetching from Reagent:", err);
-      setApiResponse("Error fetching data.");
-    } finally {
-      setApiLoading(false);
-    }
-  }
-
   function submitSearch(e) {
     e?.preventDefault?.();
     const q = input.trim();
     setHasSearched(true);
-
-    // clear previous api text on new search
-    setApiResponse("");
 
     if (!q) {
       setAppliedQ("");
@@ -415,10 +381,6 @@ export default function SearchPageRetroWithMartImages() {
       return;
     }
 
-    // kick off API call (its own spinner)
-    callReagentAPI(q);
-
-    // start fake 2s local loading for the sections
     setLoading(true);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
@@ -435,12 +397,12 @@ export default function SearchPageRetroWithMartImages() {
           <a className="btn btn-ghost text-xl font-black">Art Market Finder</a>
         </div>
         <div className="flex-none">
-          <a className="btn btn-ghost btn-sm"></a>
+          <a className="btn btn-ghost btn-sm">About</a>
         </div>
       </div>
 
       {/* Content */}
-      <main className="max-w-6xl mx-auto p-6 space-y-4">
+      <main className="max-w-6xl mx-auto p-6 space-y-8">
         <form className="join w-full" onSubmit={submitSearch}>
           <input
             className="input input-bordered join-item w-full"
@@ -452,23 +414,6 @@ export default function SearchPageRetroWithMartImages() {
             Search
           </button>
         </form>
-
-        {/* API loading spinner */}
-        {apiLoading && (
-          <div className="mt-2 p-3 rounded border border-base-300 bg-base-100 flex items-center gap-3">
-            <span className="loading loading-spinner loading-sm"></span>
-            <span className="text-sm opacity-80">hmm…</span>
-          </div>
-        )}
-
-        {/* API response below the search bar */}
-        {!apiLoading && apiResponse && (
-          <div className="mt-2 p-3 rounded border border-base-300 bg-base-100">
-            <p className="text-sm whitespace-pre-wrap break-words">
-              {apiResponse}
-            </p>
-          </div>
-        )}
 
         {!hasSearched && <HeroEmpty />}
         {hasSearched && loading && <Spinner />}

@@ -157,7 +157,7 @@ export default function Home() {
       <section className="py-6 px-4">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-extrabold">Trending Digital Art</h2>
-          <span className="text-xs text-error">All Auctions</span>
+          <span className="text-xs text-error"></span>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2">
           {trendingDigitalArts.map((post) => (
@@ -170,7 +170,7 @@ export default function Home() {
       <section className="py-6 px-4">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-extrabold">Trending Art Marts</h2>
-          <span className="text-xs text-error">All Auctions</span>
+          <span className="text-xs text-error"></span>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2">
           {trendingMarts.map((mart) => (
