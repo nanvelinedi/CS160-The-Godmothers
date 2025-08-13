@@ -1,13 +1,12 @@
 // Home.jsx
 // Landing page — auto-populates Featured Artists, Digital Art, & Art Marts from ARTISTS in searchpage.jsx
 import React, { useState } from "react";
-import { ARTISTS } from './searchpage'; // Adjust the path as needed
-
+import { ARTISTS } from "./searchpage"; // Adjust the path as needed
 
 // ================== Real Data Import (REQUIRED) ==================
 // Copy-paste the ARTISTS array below, or import it if modularized:
 //const ARTISTS = [
-  // ...PASTE your ARTISTS array here from searchpage.jsx...
+// ...PASTE your ARTISTS array here from searchpage.jsx...
 //];
 
 // Helper: flatten posts/marts across ARTISTS for easy listing
@@ -35,7 +34,9 @@ const flattenMarts = (artists) =>
 export default function Home() {
   // ========== Follow state (persisted/set for Profile.jsx sync) ==========
   const [followingSet, setFollowingSet] = useState(() => {
-    return new Set(JSON.parse(localStorage.getItem("followingArtists") || "[]"));
+    return new Set(
+      JSON.parse(localStorage.getItem("followingArtists") || "[]")
+    );
   });
 
   const toggleFollow = (artistId) => {
@@ -72,9 +73,13 @@ export default function Home() {
           className="rounded-full w-16 h-16 object-cover border border-base-300"
         />
       </div>
-      <div className="font-semibold text-center text-sm mb-2">{artist.name}</div>
+      <div className="font-semibold text-center text-sm mb-2">
+        {artist.name}
+      </div>
       <button
-        className={`btn btn-xs w-full ${followingSet.has(artist.id) ? "btn-success" : "btn-error"}`}
+        className={`btn btn-xs w-full ${
+          followingSet.has(artist.id) ? "btn-success" : "btn-error"
+        }`}
         onClick={() => toggleFollow(artist.id)}
       >
         {followingSet.has(artist.id) ? "Following" : "Follow"}
@@ -92,7 +97,9 @@ export default function Home() {
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="font-semibold text-sm leading-tight mb-1 line-clamp-1">{post.title}</div>
+      <div className="font-semibold text-sm leading-tight mb-1 line-clamp-1">
+        {post.title}
+      </div>
       <div className="flex items-center gap-2 mb-2">
         <img
           src={post.artistAvatar || "User_pfp"}
@@ -123,14 +130,21 @@ export default function Home() {
         </div>
       )}
       <div className="font-bold text-base mb-1">{mart.name}</div>
-      <div className="text-xs mb-1">{mart.location} • {mart.date}</div>
+      <div className="text-xs mb-1">
+        {mart.location} • {mart.date}
+      </div>
       <div className="text-sm opacity-70 mb-1">{mart.description}</div>
       <div className="flex gap-1 mt-1 flex-wrap">
-        {mart.tags && mart.tags.map(tag => (
-          <span key={tag} className="badge badge-xs">{tag}</span>
-        ))}
+        {mart.tags &&
+          mart.tags.map((tag) => (
+            <span key={tag} className="badge badge-xs">
+              {tag}
+            </span>
+          ))}
       </div>
-      <div className="mt-1 text-xs opacity-60">{mart.artistName && `hosted by ${mart.artistName}`}</div>
+      <div className="mt-1 text-xs opacity-60">
+        {mart.artistName && `hosted by ${mart.artistName}`}
+      </div>
     </div>
   );
 
@@ -140,7 +154,9 @@ export default function Home() {
       {/* Header Section */}
       <div className="py-8 px-4 text-center">
         <h1 className="text-4xl font-bold mb-2">Welcome John</h1>
-        <p className="text-lg text-base-content/70">Discover, collect, and sell extraordinary digital art</p>
+        <p className="text-lg text-base-content/70">
+          Discover, collect, and sell extraordinary digital art
+        </p>
       </div>
 
       {/* Featured Artists */}
@@ -157,7 +173,7 @@ export default function Home() {
       <section className="py-6 px-4">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-extrabold">Trending Digital Art</h2>
-          <span className="text-xs text-error">All Auctions</span>
+          <span className="text-xs text-error"></span>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2">
           {trendingDigitalArts.map((post) => (
@@ -170,7 +186,7 @@ export default function Home() {
       <section className="py-6 px-4">
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-xl font-extrabold">Trending Art Marts</h2>
-          <span className="text-xs text-error">All Auctions</span>
+          <span className="text-xs text-error"></span>
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2">
           {trendingMarts.map((mart) => (

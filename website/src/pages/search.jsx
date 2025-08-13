@@ -5,7 +5,11 @@ import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import marketsData from "../data/markets.json";
 
-import { getBookmarks, toggleBookmark as storeToggle, BOOKMARKS_EVENT } from "../lib/bookmarks";
+import {
+  getBookmarks,
+  toggleBookmark as storeToggle,
+  BOOKMARKS_EVENT,
+} from "../lib/bookmarks";
 import { getApprovedEvents, EVENTS_CHANGED } from "../lib/eventStorage";
 
 // Map config
@@ -169,10 +173,19 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
 
   return (
     <div className="relative" ref={wrapRef}>
-
       <label className="input input-bordered rounded-none bg-base-100 flex items-center gap-2 w-full">
-        <svg className="h-[1em] opacity-60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
+        <svg
+          className="h-[1em] opacity-60"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <g
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            strokeWidth="2.5"
+            fill="none"
+            stroke="currentColor"
+          >
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.3-4.3"></path>
           </g>
@@ -276,7 +289,10 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
 
       // center horizontally over the card
       let left = cardRect.left + cardRect.width / 2 - popupRect.width / 2;
-      left = Math.max(margin, Math.min(left, window.innerWidth - popupRect.width - margin));
+      left = Math.max(
+        margin,
+        Math.min(left, window.innerWidth - popupRect.width - margin)
+      );
 
       // ALWAYS above; if not enough space, hug the top margin
       let top = cardRect.top - popupRect.height - 8;
@@ -303,7 +319,8 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
     };
     if (showPopup) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showPopup]);
 
@@ -326,14 +343,18 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                 </h3>
                 <button
                   className={`btn btn-ghost btn-sm btn-circle ${
-                    isBookmarked ? "text-warning" : "opacity-60 hover:opacity-100"
+                    isBookmarked
+                      ? "text-warning"
+                      : "opacity-60 hover:opacity-100"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     onBookmark(event.id);
                   }}
                   title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
-                  aria-label={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+                  aria-label={
+                    isBookmarked ? "Remove bookmark" : "Bookmark event"
+                  }
                 >
                   <svg
                     className="w-4 h-4"
@@ -355,8 +376,9 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
             <div className="card-actions flex-shrink-0 mt-2 flex items-center justify-between">
               <div className="flex gap-2 flex-wrap">
                 <span className="badge badge-outline text-xs">
-
-                  {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}
+                  {event.date
+                    ? new Date(event.date).toLocaleDateString()
+                    : "TBA"}
                 </span>
                 {event.tags?.slice(0, 2).map((t) => (
                   <span key={t} className="badge text-xs">
@@ -404,17 +426,36 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                 <div className="flex items-center gap-1">
                   <button
                     className={`btn btn-ghost btn-xs btn-circle ${
-                      isBookmarked ? "text-warning" : "opacity-60 hover:opacity-100"
+                      isBookmarked
+                        ? "text-warning"
+                        : "opacity-60 hover:opacity-100"
                     }`}
                     onClick={() => onBookmark(event.id)}
-                    aria-label={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+                    aria-label={
+                      isBookmarked ? "Remove bookmark" : "Bookmark event"
+                    }
                     title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
                   >
-                    <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    <svg
+                      className="w-4 h-4"
+                      fill={isBookmarked ? "currentColor" : "none"}
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                      />
                     </svg>
                   </button>
-                  <button className="btn btn-ghost btn-xs btn-circle" onClick={() => setShowPopup(false)} aria-label="Close" title="Close">
+                  <button
+                    className="btn btn-ghost btn-xs btn-circle"
+                    onClick={() => setShowPopup(false)}
+                    aria-label="Close"
+                    title="Close"
+                  >
                     ✕
                   </button>
                 </div>
@@ -435,20 +476,48 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
               <div className="space-y-2 text-sm">
                 {event.date && (
                   <div className="flex items-start gap-2">
-                    <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    <svg
+                      className="w-4 h-4 mt-0.5 opacity-70"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
                     </svg>
                     <div>
-                      <div className="font-medium">{formatDate(event.date)}</div>
-                      <div className="opacity-70">{event.time ? event.time : formatTime(event.date)}</div>
+                      <div className="font-medium">
+                        {formatDate(event.date)}
+                      </div>
+                      <div className="opacity-70">
+                        {event.time ? event.time : formatTime(event.date)}
+                      </div>
                     </div>
                   </div>
                 )}
                 <div className="flex items-start gap-2">
-
-                  <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <svg
+                    className="w-4 h-4 mt-0.5 opacity-70"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
                   </svg>
                   <div>
                     <div className="font-medium">Location</div>
@@ -457,19 +526,33 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                 </div>
                 {event.website && (
                   <div className="flex items-start gap-2">
-                    <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    <svg
+                      className="w-4 h-4 mt-0.5 opacity-70"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                      />
                     </svg>
                     <div>
                       <div className="font-medium">Website</div>
-                      <a href={event.website} target="_blank" rel="noopener noreferrer" className="link link-primary">
+                      <a
+                        href={event.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link link-primary"
+                      >
                         Visit website
                       </a>
                     </div>
                   </div>
                 )}
               </div>
-
 
               {/* Bio */}
               {bio && (
@@ -481,7 +564,11 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
 
               {/* Zoom modal */}
               {modalImg && (
-                <dialog className="modal" open onMouseDown={(e) => e.stopPropagation()}>
+                <dialog
+                  className="modal"
+                  open
+                  onMouseDown={(e) => e.stopPropagation()}
+                >
                   <div className="modal-box p-2">
                     <button
                       className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -491,9 +578,17 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                     >
                       ✕
                     </button>
-                    <img src={modalImg} alt="Enlarged event" className="w-full h-auto" />
+                    <img
+                      src={modalImg}
+                      alt="Enlarged event"
+                      className="w-full h-auto"
+                    />
                   </div>
-                  <form method="dialog" className="modal-backdrop" onClick={() => setModalImg(null)}>
+                  <form
+                    method="dialog"
+                    className="modal-backdrop"
+                    onClick={() => setModalImg(null)}
+                  >
                     <button>close</button>
                   </form>
                 </dialog>
@@ -505,7 +600,6 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
     </>
   );
 }
-
 
 /* ====================== Search page ====================== */
 
@@ -528,29 +622,30 @@ export default function Search() {
     return () => window.removeEventListener(EVENTS_CHANGED, onChange);
   }, []);
 
-
   const allEvents = useMemo(() => [...marketsData, ...approved], [approved]);
 
   // Ensure coords are numbers and ids are strings
   const normalizedEvents = useMemo(
     () =>
       allEvents
-        .map(e => ({
+        .map((e) => ({
           ...e,
-          id: String(e.id ?? ""),                // for selection styling
+          id: String(e.id ?? ""), // for selection styling
           lat: typeof e.lat === "string" ? parseFloat(e.lat) : e.lat,
           lng: typeof e.lng === "string" ? parseFloat(e.lng) : e.lng,
         }))
-        .filter(e => Number.isFinite(e.lat) && Number.isFinite(e.lng)),
+        .filter((e) => Number.isFinite(e.lat) && Number.isFinite(e.lng)),
     [allEvents]
   );
 
   // Use normalized events for filtering + rendering
   const filtered = useMemo(
-    () => normalizedEvents.filter(m => haversineKm(origin, [m.lng, m.lat]) <= radiusKm),
+    () =>
+      normalizedEvents.filter(
+        (m) => haversineKm(origin, [m.lng, m.lat]) <= radiusKm
+      ),
     [normalizedEvents, origin, radiusKm]
   );
-
 
   const toggleBookmark = (eventId) => {
     const next = storeToggle(eventId); // returns array of strings
@@ -793,48 +888,37 @@ export default function Search() {
   }
 
   return (
-  <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-6 space-y-4 overflow-x-clip">
-    {/* Toolbar */}
-    {/* Toolbar — DaisyUI join group */}
-<div className="join w-full">
-  <div className="join-item flex-1 min-w-0">
-    <GeoSearch onSelect={handlePickPlace} placeholder="Search location" />
-  </div>
-
-  <select
-    className="select select-bordered join-item w-36"
-    value={radiusKm}
-    onChange={(e) => setRadiusKm(Number(e.target.value))}
-    aria-label="Search radius"
-  >
-    {[5,10,25,50,100].map(k => <option key={k} value={k}>{k} km</option>)}
-  </select>
-
-  <button className="btn btn-outline join-item" onClick={useMyLocation}>
-    Use my location
-  </button>
-</div>
-
-
-    {/* Map */}
-    <div className="bg-base-100 rounded-box shadow overflow-hidden">
-      <div ref={mapEl} className="w-full h-72 md:h-96" />
-    </div>
-
-    {/* Results header / empty */}
-    <div className="flex items-center justify-between min-w-0">
-      <p className="text-sm opacity-70">
-        {filtered.length} market(s) within {radiusKm} km
-      </p>
-      {filtered.length === 0 && (
-        <div className="text-sm">
-          Sorry, no events nearby.{" "}
-          <Link className="link link-primary" to="/submit-event">
-            Click here to submit an event!
-          </Link>
+    <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-6 space-y-4 overflow-x-clip">
+      {/* Toolbar */}
+      {/* Toolbar — DaisyUI join group */}
+      <div className="join w-full">
+        <div className="join-item flex-1 min-w-0">
+          <GeoSearch onSelect={handlePickPlace} placeholder="Search location" />
         </div>
-      )}
-    </div>
+
+        <select
+          className="select select-bordered join-item w-36"
+          value={radiusKm}
+          onChange={(e) => setRadiusKm(Number(e.target.value))}
+          aria-label="Search radius"
+        >
+          {[5, 10, 25, 50, 100].map((k) => (
+            <option key={k} value={k}>
+              {k} km
+            </option>
+          ))}
+        </select>
+
+        <button className="btn btn-outline join-item" onClick={useMyLocation}>
+          Use my location
+        </button>
+      </div>
+
+      {/* Map */}
+      <div className="bg-base-100 rounded-box shadow overflow-hidden">
+        <div ref={mapEl} className="w-full h-72 md:h-96" />
+      </div>
+
       {/* Results header / empty */}
       <div className="flex items-center justify-between min-w-0">
         <p className="text-sm opacity-70">
