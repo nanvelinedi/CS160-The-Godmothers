@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import marketsData from "../data/markets.json";
 import { getBookmarks, toggleBookmark as storeToggle, BOOKMARKS_EVENT } from "../lib/bookmarks";
+import { getApprovedEvents, EVENTS_CHANGED } from "../lib/eventStorage";
 
 
 // Map config
@@ -444,10 +445,37 @@ export default function Search() {
   const [selectedId, setSelectedId] = useState(null);
   const [bookmarkedIds, setBookmarkedIds] = useState(() => new Set(getBookmarks()));
 
-  const filtered = useMemo(
-    () => marketsData.filter(m => haversineKm(origin, [m.lng, m.lat]) <= radiusKm),
-    [origin, radiusKm]
+  const [approved, setApproved] = useState(() => getApprovedEvents());
+
+  useEffect(() => {
+    const onChange = () => setApproved(getApprovedEvents());
+    window.addEventListener(EVENTS_CHANGED, onChange);
+    return () => window.removeEventListener(EVENTS_CHANGED, onChange);
+  }, []);
+
+
+  const allEvents = useMemo(() => [...marketsData, ...approved], [approved]);
+
+  // Ensure coords are numbers and ids are strings
+  const normalizedEvents = useMemo(
+    () =>
+      allEvents
+        .map(e => ({
+          ...e,
+          id: String(e.id ?? ""),                // for selection styling
+          lat: typeof e.lat === "string" ? parseFloat(e.lat) : e.lat,
+          lng: typeof e.lng === "string" ? parseFloat(e.lng) : e.lng,
+        }))
+        .filter(e => Number.isFinite(e.lat) && Number.isFinite(e.lng)),
+    [allEvents]
   );
+
+  // Use normalized events for filtering + rendering
+  const filtered = useMemo(
+    () => normalizedEvents.filter(m => haversineKm(origin, [m.lng, m.lat]) <= radiusKm),
+    [normalizedEvents, origin, radiusKm]
+  );
+
 
   const toggleBookmark = (eventId) => {
     const next = storeToggle(eventId);      // returns array of strings

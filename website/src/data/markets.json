@@ -11,9 +11,9 @@
     "website": "https://example.com/oak-art",
     "bio": "A curated indie maker market featuring 80+ Bay Area artists, live music, and small-batch food vendors.",
     "images": [
-      "/images/oak-art/1.jpg",
-      "/images/oak-art/2.jpg",
-      "/images/oak-art/3.jpg"
+      "src/images/oak-art/1.jpg",
+      "src/images/oak-art/2.jpg",
+      "src/images/oak-art/3.jpg"
     ],
     "tags": ["art", "handmade", "outdoor"]
   },
