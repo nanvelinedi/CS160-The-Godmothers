@@ -197,14 +197,14 @@ export default function Profile() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Saved Events</h2>
-          {bookmarkedEvents.length > 0 && (
+          {/* {bookmarkedEvents.length > 0 && (
             <button
               className="btn btn-ghost btn-sm"
               onClick={() => clearBookmarks()} // BOOKMARKS_EVENT will handle UI refresh
             >
               Clear all
             </button>
-          )}
+          )} */}
         </div>
 
         {bookmarkedEvents.length > 0 ? (
@@ -279,7 +279,7 @@ export default function Profile() {
           </div>
         ) : (
           <div className="alert">
-            <span>No saved events yet. Go bookmark some from the Explorer!</span>
+            <span>No saved events yet. Go bookmark some from the Map!</span>
           </div>
         )}
       </div>
