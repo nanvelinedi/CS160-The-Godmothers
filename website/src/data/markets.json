@@ -1,92 +1,72 @@
 [
   {
-    "id": "sarahs",
-    "name": "Sarah’s Art Mart",
-    "address": "231 Summers Road",
-    "lat": 41.8781,
-    "lng": -87.6298,
-    "date": "2025-08-24",
-    "tags": ["handmade","paintings"]
-  },
-  {
-    "id": "japan",
-    "name": "Japan Art Mart",
-    "address": "12 Hills St.",
-    "lat": 41.9,
-    "lng": -87.65,
-    "date": "2025-09-10",
-    "tags": ["ceramics","prints"]
-  },
-  {
-    "id": "berkeley-art-walk",
-    "name": "Downtown Berkeley Art Walk",
-    "address": "Shattuck Ave, Berkeley, CA",
+    "id": "oak-art-fair-2025",
+    "name": "Oakland Art & Indie Market",
+    "lat": 37.8044,
+    "lng": -122.2712,
+    "address": "500 10th St, Oakland, CA",
     "date": "2025-09-14",
-    "tags": ["handmade", "paintings"],
-    "lat": 37.8719,
-    "lng": -122.2687
+    "time": "11:00 AM – 5:00 PM",
+    "price": "Free",
+    "website": "https://example.com/oak-art",
+    "bio": "A curated indie maker market featuring 80+ Bay Area artists, live music, and small-batch food vendors.",
+    "images": [
+      "/images/oak-art/1.jpg",
+      "/images/oak-art/2.jpg",
+      "/images/oak-art/3.jpg"
+    ],
+    "tags": ["art", "handmade", "outdoor"]
   },
   {
-    "id": "oakland-makers-market",
-    "name": "Oakland Makers Market",
-    "address": "Jack London Square, Oakland, CA",
-    "date": "2025-09-21",
-    "tags": ["ceramics", "prints"],
-    "lat": 37.7952,
-    "lng": -122.2772
+    "id": "sf-ferry-plaza-2025",
+    "name": "Ferry Plaza Farmers Market",
+    "lat": 37.7955,
+    "lng": -122.3937,
+    "address": "1 Ferry Building, San Francisco, CA",
+    "date": "2025-09-20",
+    "time": "8:00–14:00",
+    "price": "Free",
+    "website": "https://cuesa.org/markets/ferry-plaza-farmers-market",
+    "bio": "A vibrant outdoor market featuring fresh produce, artisanal goods, and live cooking demos with a view of the Bay Bridge.",
+    "images": [
+      "/images/ferry-plaza/1.jpg",
+      "/images/ferry-plaza/2.jpg",
+      "/images/ferry-plaza/3.jpg"
+    ],
+    "tags": ["food", "outdoor", "local"]
   },
   {
-    "id": "bay-street-artisan-fair",
-    "name": "Bay Street Artisan Fair",
-    "address": "San Francisco Bay Area, CA",
-    "date": "2025-09-19",
-    "tags": ["vintage", "handmade"],
-    "lat": 37.735162,
-    "lng": -122.285434
+    "id": "sf-treasurefest-2025",
+    "name": "TreasureFest",
+    "lat": 37.8262,
+    "lng": -122.3706,
+    "address": "Treasure Island, San Francisco, CA",
+    "date": "2025-09-28",
+    "time": "10:00–17:00",
+    "price": "$10",
+    "website": "https://treasurefest.com/",
+    "bio": "Monthly outdoor festival featuring hundreds of local vendors, gourmet food trucks, live music, and panoramic city views.",
+    "images": [
+
+    ],
+    "tags": ["festival", "music", "food"]
   },
   {
-    "id": "mission-district-street-fair",
-    "name": "Mission District Street Fair",
-    "address": "San Francisco Bay Area, CA",
-    "date": "2025-10-27",
-    "tags": ["music", "food"],
-    "lat": 37.856266,
-    "lng": -122.410562
-  },
-  {
-    "id": "oakland-first-friday-special",
-    "name": "Oakland First Friday Special",
-    "address": "San Francisco Bay Area, CA",
-    "date": "2025-09-16",
-    "tags": ["craft", "art"],
-    "lat": 37.709242,
-    "lng": -122.29083
-  },
-  {
-    "id": "castro-street-pop-up-gallery",
-    "name": "Castro Street Pop-Up Gallery",
-    "address": "San Francisco Bay Area, CA",
-    "date": "2025-12-13",
-    "tags": ["queer", "art"],
-    "lat": 37.766434,
-    "lng": -122.541994
-  },
-  {
-    "id": "yerba-buena-art-walk",
-    "name": "Yerba Buena Art Walk",
-    "address": "San Francisco Bay Area, CA",
-    "date": "2025-11-18",
-    "tags": ["vintage", "handmade"],
-    "lat": 37.894644,
-    "lng": -122.392886
-  },
-  {
-    "id": "union-square-holiday-market",
-    "name": "Union Square Holiday Market",
-    "address": "San Francisco Bay Area, CA",
-    "date": "2025-09-21",
-    "tags": ["music", "food"],
-    "lat": 37.779931,
-    "lng": -122.319488
+    "id": "sf-sunday-streets-2025",
+    "name": "Sunday Streets Mission",
+    "lat": 37.7599,
+    "lng": -122.4148,
+    "address": "Valencia Street, San Francisco, CA",
+    "date": "2025-10-05",
+    "time": "11:00–16:00",
+    "price": "Free",
+    "website": "https://www.sundaystreetssf.com/",
+    "bio": "A car-free community street fair celebrating the Mission District with music, performances, art, and activities for all ages.",
+    "images": [
+      "/images/sunday-streets/1.jpg",
+      "/images/sunday-streets/2.jpg",
+      "/images/sunday-streets/3.jpg"
+    ],
+    "tags": ["community", "outdoor", "family"]
   }
 ]
