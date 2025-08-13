@@ -12,6 +12,7 @@ import {
 } from "../lib/bookmarks";
 import { ARTISTS } from "./searchpage"; // Import your unified artist/post/mart data
 import UserPfp from "../images/User_pfp.png"; // Adjust extension and relative path as needed
+import { Images } from "lucide-react"; // Importing Images icon from lucide-react
 
 // Helper: flatten marts from ARTISTS
 const flattenMarts = (artists) =>
@@ -159,7 +160,7 @@ export default function Profile() {
             }`}
             onClick={() => setActiveTab("calendar")}
           />
-          <FaPlus
+          <Images
             className={`cursor-pointer ${
               activeTab === "posts" ? "text-primary" : ""
             }`}
