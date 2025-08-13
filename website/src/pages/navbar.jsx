@@ -1,4 +1,4 @@
-// pages/Navbar.jsx
+// src/pages/Navbar.jsx
 import { Link } from "react-router-dom";
 import {
   Home,
@@ -9,20 +9,17 @@ import {
   FileQuestionMark,
   Search,
 } from "lucide-react";
+import Logo from '../images/logo.png'; // Import your logo image
 
 export default function Navbar() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-base-100 p-6 flex flex-col">
       {/* Logo */}
+      <Link to="/" className="flex items-center gap-2 mb-8">
+        <img src={Logo} alt="ArtSpots Logo" className="w-10 h-10 object-contain" />
+        <span className="text-xl font-bold text-gray-700">ArtSpots</span>
+      </Link>
 
-      <div className="flex items-center gap-2 mb-8">
-        <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
-          <div className="w-4 h-4 bg-gray-300 rounded-sm"></div>
-        </div>
-        <Link to="/" className="">
-          <span className="text-xl font-bold text-gray-700">LOGO</span>
-        </Link>
-      </div>
       {/* Main Section */}
       <div className="mb-8">
         <h3 className="text-sm font-medium text-gray-500 mb-4">Main</h3>

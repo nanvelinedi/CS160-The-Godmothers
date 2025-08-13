@@ -821,20 +821,7 @@ export default function Search() {
       <div ref={mapEl} className="w-full h-72 md:h-96" />
     </div>
 
-    {/* Results header / empty */}
-    <div className="flex items-center justify-between min-w-0">
-      <p className="text-sm opacity-70">
-        {filtered.length} market(s) within {radiusKm} km
-      </p>
-      {filtered.length === 0 && (
-        <div className="text-sm">
-          Sorry, no events nearby.{" "}
-          <Link className="link link-primary" to="/submit-event">
-            Click here to submit an event!
-          </Link>
-        </div>
-      )}
-    </div>
+    
       {/* Results header / empty */}
       <div className="flex items-center justify-between min-w-0">
         <p className="text-sm opacity-70">
