@@ -9,6 +9,7 @@
 @plugin "daisyui" {
   themes: retro --default, light, dark;
 }
+
 /* ──────────────────────────────────────────────── */
 /* Geocoder pill (control) */
 .amf-geocoder .mapboxgl-ctrl-geocoder {
@@ -105,4 +106,5 @@
     /* remove width/max-width here */
   }
 }
+
 

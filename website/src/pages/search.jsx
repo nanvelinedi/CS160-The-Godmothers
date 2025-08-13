@@ -1,12 +1,12 @@
 // src/pages/search.jsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import marketsData from "../data/markets.json";
-import {
-  getBookmarks,
-  toggleBookmark as storeToggle,
-  BOOKMARKS_EVENT,
-} from "../lib/bookmarks";
+
+import { getBookmarks, toggleBookmark as storeToggle, BOOKMARKS_EVENT } from "../lib/bookmarks";
+import { getApprovedEvents, EVENTS_CHANGED } from "../lib/eventStorage";
 
 // Map config
 mapboxgl.accessToken =
@@ -169,19 +169,10 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
 
   return (
     <div className="relative" ref={wrapRef}>
-      <label className="input input-bordered rounded-full bg-base-100 flex items-center gap-2 w-full">
-        <svg
-          className="h-[1em] opacity-60"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            strokeWidth="2.5"
-            fill="none"
-            stroke="currentColor"
-          >
+
+      <label className="input input-bordered rounded-none bg-base-100 flex items-center gap-2 w-full">
+        <svg className="h-[1em] opacity-60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.3-4.3"></path>
           </g>
@@ -241,11 +232,18 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
   );
 }
 
-/* ========= Event Card with Tooltip Popup ========= */
+/* ========= Event Card with Tooltip Popup (measured position + images at top) ========= */
+/* ========= Event Card with Tooltip Popup (always-up + portal) ========= */
 function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
   const [showPopup, setShowPopup] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const [popupPos, setPopupPos] = useState({ top: 0, left: 0 });
+  const [modalImg, setModalImg] = useState(null);
+
   const cardRef = useRef(null);
+  const popupRef = useRef(null);
+
+  const images = Array.isArray(event.images) ? event.images : [];
+  const bio = event.bio || event.description;
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -264,34 +262,54 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
 
   const handleSeeMore = (e) => {
     e.stopPropagation();
-    if (!showPopup && cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect();
-      const popupWidth = 320; // w-80
-      const popupHeight = 200;
-      let left = rect.left + rect.width / 2 - popupWidth / 2;
-      let top = rect.top - popupHeight - 8;
-      if (left < 10) left = 10;
-      if (left + popupWidth > window.innerWidth - 10)
-        left = window.innerWidth - popupWidth - 10;
-      if (top < 10) top = rect.bottom + 8;
-      setPopupPosition({ top, left });
-    }
-    setShowPopup(!showPopup);
+    setShowPopup((s) => !s);
   };
 
+  // Position the popup ABOVE the card, centered; clamp to viewport
+  useLayoutEffect(() => {
+    if (!showPopup || !cardRef.current || !popupRef.current) return;
+
+    const margin = 10;
+    const place = () => {
+      const cardRect = cardRef.current.getBoundingClientRect();
+      const popupRect = popupRef.current.getBoundingClientRect();
+
+      // center horizontally over the card
+      let left = cardRect.left + cardRect.width / 2 - popupRect.width / 2;
+      left = Math.max(margin, Math.min(left, window.innerWidth - popupRect.width - margin));
+
+      // ALWAYS above; if not enough space, hug the top margin
+      let top = cardRect.top - popupRect.height - 8;
+      top = Math.max(margin, top);
+
+      setPopupPos({ top, left });
+    };
+
+    place();
+    const onResize = () => place();
+    const onScroll = () => place();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [showPopup, images.length]);
+
+  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (showPopup && !e.target.closest(".event-popup")) setShowPopup(false);
     };
     if (showPopup) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showPopup]);
 
   return (
     <>
+      {/* Card in horizontal list */}
       <div className="flex-none w-80 h-40">
         <div
           ref={cardRef}
@@ -308,15 +326,14 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                 </h3>
                 <button
                   className={`btn btn-ghost btn-sm btn-circle ${
-                    isBookmarked
-                      ? "text-warning"
-                      : "opacity-60 hover:opacity-100"
+                    isBookmarked ? "text-warning" : "opacity-60 hover:opacity-100"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
                     onBookmark(event.id);
                   }}
                   title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+                  aria-label={isBookmarked ? "Remove bookmark" : "Bookmark event"}
                 >
                   <svg
                     className="w-4 h-4"
@@ -338,7 +355,8 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
             <div className="card-actions flex-shrink-0 mt-2 flex items-center justify-between">
               <div className="flex gap-2 flex-wrap">
                 <span className="badge badge-outline text-xs">
-                  {new Date(event.date).toLocaleDateString()}
+
+                  {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}
                 </span>
                 {event.tags?.slice(0, 2).map((t) => (
                   <span key={t} className="badge text-xs">
@@ -353,181 +371,141 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
           </div>
         </div>
       </div>
-
-      {showPopup && (
-        <div
-          className="event-popup fixed z-[9999] w-80 bg-base-100 rounded-box shadow-2xl border border-base-300 p-4"
-          style={{
-            top: `${popupPosition.top}px`,
-            left: `${popupPosition.left}px`,
-          }}
-        >
-          <div className="space-y-4">
-            <div className="flex justify-between items-start">
-              <h4 className="font-bold text-lg flex-1 pr-2">{event.name}</h4>
-              <div className="flex items-center gap-1">
-                <button
-                  className={`btn btn-ghost btn-xs btn-circle ${
-                    isBookmarked
-                      ? "text-warning"
-                      : "opacity-60 hover:opacity-100"
-                  }`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onBookmark(event.id);
-                  }}
-                  aria-label={
-                    isBookmarked ? "Remove bookmark" : "Bookmark event"
-                  }
-                  title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill={isBookmarked ? "currentColor" : "none"}
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                    />
-                  </svg>
-                </button>
-
-                <button
-                  className="btn btn-ghost btn-xs btn-circle"
-                  onClick={() => setShowPopup(false)}
-                  aria-label="Close"
-                  title="Close"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-1">
-              {event.tags?.map((tag) => (
-                <span key={tag} className="badge badge-primary badge-sm">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="space-y-3 text-sm">
-              <div className="flex items-start gap-2">
-                <svg
-                  className="w-4 h-4 mt-0.5 opacity-70"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <div>
-                  <div className="font-medium">{formatDate(event.date)}</div>
-                  <div className="opacity-70">{formatTime(event.date)}</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2">
-                <svg
-                  className="w-4 h-4 mt-0.5 opacity-70"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <div>
-                  <div className="font-medium">Location</div>
-                  <div className="opacity-70">{event.address}</div>
-                </div>
-              </div>
-
-              {event.contact && (
-                <div className="flex items-start gap-2">
-                  <svg
-                    className="w-4 h-4 mt-0.5 opacity-70"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <div>
-                    <div className="font-medium">Contact</div>
-                    <div className="opacity-70">{event.contact}</div>
-                  </div>
+      {/* Popup rendered to body so it never gets clipped */}
+      {showPopup &&
+        createPortal(
+          <div
+            ref={popupRef}
+            className="event-popup fixed z-[9999] w-80 bg-base-100 rounded-box shadow-2xl border border-base-300 p-4"
+            style={{ top: `${popupPos.top}px`, left: `${popupPos.left}px` }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-3">
+              {/* IMAGES FIRST (DaisyUI carousel; no number buttons) */}
+              {images.length > 0 && (
+                <div className="carousel carousel-center w-full rounded-box bg-base-200 p-1 space-x-2">
+                  {images.map((src, i) => (
+                    <div key={i} className="carousel-item justify-center">
+                      <img
+                        src={src}
+                        alt={`Event image ${i + 1}`}
+                        className="h-44 max-w-full object-contain rounded-box cursor-zoom-in"
+                        onClick={() => setModalImg(src)}
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
 
-              {event.website && (
-                <div className="flex items-start gap-2">
-                  <svg
-                    className="w-4 h-4 mt-0.5 opacity-70"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {/* Header + actions */}
+              <div className="flex justify-between items-start">
+                <h4 className="font-bold text-lg flex-1 pr-2">{event.name}</h4>
+                <div className="flex items-center gap-1">
+                  <button
+                    className={`btn btn-ghost btn-xs btn-circle ${
+                      isBookmarked ? "text-warning" : "opacity-60 hover:opacity-100"
+                    }`}
+                    onClick={() => onBookmark(event.id)}
+                    aria-label={isBookmarked ? "Remove bookmark" : "Bookmark event"}
+                    title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                    />
+                    <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                  </button>
+                  <button className="btn btn-ghost btn-xs btn-circle" onClick={() => setShowPopup(false)} aria-label="Close" title="Close">
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {event.tags?.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {event.tags.map((tag) => (
+                    <span key={tag} className="badge badge-primary badge-sm">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Date / Time / Location / Website */}
+              <div className="space-y-2 text-sm">
+                {event.date && (
+                  <div className="flex items-start gap-2">
+                    <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <div>
+                      <div className="font-medium">{formatDate(event.date)}</div>
+                      <div className="opacity-70">{event.time ? event.time : formatTime(event.date)}</div>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-start gap-2">
+
+                  <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <div>
-                    <div className="font-medium">Website</div>
-                    <a
-                      href={event.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="link link-primary"
+                    <div className="font-medium">Location</div>
+                    <div className="opacity-70">{event.address}</div>
+                  </div>
+                </div>
+                {event.website && (
+                  <div className="flex items-start gap-2">
+                    <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    <div>
+                      <div className="font-medium">Website</div>
+                      <a href={event.website} target="_blank" rel="noopener noreferrer" className="link link-primary">
+                        Visit website
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+
+              {/* Bio */}
+              {bio && (
+                <div className="text-sm">
+                  <div className="font-medium mb-1">About</div>
+                  <p className="opacity-80 leading-relaxed">{bio}</p>
+                </div>
+              )}
+
+              {/* Zoom modal */}
+              {modalImg && (
+                <dialog className="modal" open onMouseDown={(e) => e.stopPropagation()}>
+                  <div className="modal-box p-2">
+                    <button
+                      className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                      onClick={() => setModalImg(null)}
+                      aria-label="Close image"
+                      title="Close image"
                     >
-                      Visit website
-                    </a>
+                      ✕
+                    </button>
+                    <img src={modalImg} alt="Enlarged event" className="w-full h-auto" />
                   </div>
-                </div>
-              )}
-
-              {event.description && (
-                <div>
-                  <div className="font-medium mb-1">Description</div>
-                  <p className="opacity-80 leading-relaxed">
-                    {event.description}
-                  </p>
-                </div>
+                  <form method="dialog" className="modal-backdrop" onClick={() => setModalImg(null)}>
+                    <button>close</button>
+                  </form>
+                </dialog>
               )}
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }
+
 
 /* ====================== Search page ====================== */
 
@@ -542,13 +520,37 @@ export default function Search() {
     () => new Set(getBookmarks())
   );
 
-  const filtered = useMemo(
+  const [approved, setApproved] = useState(() => getApprovedEvents());
+
+  useEffect(() => {
+    const onChange = () => setApproved(getApprovedEvents());
+    window.addEventListener(EVENTS_CHANGED, onChange);
+    return () => window.removeEventListener(EVENTS_CHANGED, onChange);
+  }, []);
+
+
+  const allEvents = useMemo(() => [...marketsData, ...approved], [approved]);
+
+  // Ensure coords are numbers and ids are strings
+  const normalizedEvents = useMemo(
     () =>
-      marketsData.filter(
-        (m) => haversineKm(origin, [m.lng, m.lat]) <= radiusKm
-      ),
-    [origin, radiusKm]
+      allEvents
+        .map(e => ({
+          ...e,
+          id: String(e.id ?? ""),                // for selection styling
+          lat: typeof e.lat === "string" ? parseFloat(e.lat) : e.lat,
+          lng: typeof e.lng === "string" ? parseFloat(e.lng) : e.lng,
+        }))
+        .filter(e => Number.isFinite(e.lat) && Number.isFinite(e.lng)),
+    [allEvents]
   );
+
+  // Use normalized events for filtering + rendering
+  const filtered = useMemo(
+    () => normalizedEvents.filter(m => haversineKm(origin, [m.lng, m.lat]) <= radiusKm),
+    [normalizedEvents, origin, radiusKm]
+  );
+
 
   const toggleBookmark = (eventId) => {
     const next = storeToggle(eventId); // returns array of strings
@@ -791,34 +793,48 @@ export default function Search() {
   }
 
   return (
-    <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-6 space-y-4 overflow-x-clip">
-      {/* Toolbar */}
-      <div className="bg-base-100 rounded-box shadow p-3 lg:p-4 flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
-        <div className="relative flex-1 min-w-0">
-          <GeoSearch onSelect={handlePickPlace} />
+  <div className="w-full max-w-screen-xl mx-auto px-4 lg:px-6 space-y-4 overflow-x-clip">
+    {/* Toolbar */}
+    {/* Toolbar — DaisyUI join group */}
+<div className="join w-full">
+  <div className="join-item flex-1 min-w-0">
+    <GeoSearch onSelect={handlePickPlace} placeholder="Search location" />
+  </div>
+
+  <select
+    className="select select-bordered join-item w-36"
+    value={radiusKm}
+    onChange={(e) => setRadiusKm(Number(e.target.value))}
+    aria-label="Search radius"
+  >
+    {[5,10,25,50,100].map(k => <option key={k} value={k}>{k} km</option>)}
+  </select>
+
+  <button className="btn btn-outline join-item" onClick={useMyLocation}>
+    Use my location
+  </button>
+</div>
+
+
+    {/* Map */}
+    <div className="bg-base-100 rounded-box shadow overflow-hidden">
+      <div ref={mapEl} className="w-full h-72 md:h-96" />
+    </div>
+
+    {/* Results header / empty */}
+    <div className="flex items-center justify-between min-w-0">
+      <p className="text-sm opacity-70">
+        {filtered.length} market(s) within {radiusKm} km
+      </p>
+      {filtered.length === 0 && (
+        <div className="text-sm">
+          Sorry, no events nearby.{" "}
+          <Link className="link link-primary" to="/submit-event">
+            Click here to submit an event!
+          </Link>
         </div>
-        <select
-          className="select select-bordered w-full lg:w-44 flex-none"
-          value={radiusKm}
-          onChange={(e) => setRadiusKm(Number(e.target.value))}
-          aria-label="Search radius"
-        >
-          {[5, 10, 25, 50, 100].map((k) => (
-            <option key={k} value={k}>
-              {k} km
-            </option>
-          ))}
-        </select>
-        <button className="btn btn-outline flex-none" onClick={useMyLocation}>
-          Use my location
-        </button>
-      </div>
-
-      {/* Map */}
-      <div className="bg-base-100 rounded-box shadow overflow-hidden">
-        <div ref={mapEl} className="w-full h-72 md:h-96" />
-      </div>
-
+      )}
+    </div>
       {/* Results header / empty */}
       <div className="flex items-center justify-between min-w-0">
         <p className="text-sm opacity-70">

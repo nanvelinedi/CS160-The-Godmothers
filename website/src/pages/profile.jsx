@@ -1,7 +1,8 @@
-// src/pages/Profile.jsx
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { FaCalendarAlt, FaPlus, FaPencilAlt, FaShoppingBag } from "react-icons/fa";
 import marketsData from "../data/markets.json";
+import { getAllPosts, POSTS_EVENT } from "../lib/postStore";
 import {
   getBookmarks,
   clearBookmarks,
@@ -31,6 +32,19 @@ export default function Profile() {
 
   /* ===== Bookmarks: live-sync with localStorage (same helpers as Search) ===== */
   const [bookmarksVersion, setBookmarksVersion] = useState(0);
+
+  // My Posts refresh when posts are saved
+  const [postsVersion, setPostsVersion] = useState(0);
+  useEffect(() => {
+    const onPosts = () => setPostsVersion(v => v + 1);
+    window.addEventListener(POSTS_EVENT, onPosts);
+    window.addEventListener("focus", onPosts); // refresh when returning from New Post page
+    return () => {
+      window.removeEventListener(POSTS_EVENT, onPosts);
+      window.removeEventListener("focus", onPosts);
+    };
+  }, []);
+  const myPosts = useMemo(() => getAllPosts(), [postsVersion]);
 
   // Listen for global bookmark changes (Search page, other tabs, etc.)
   useEffect(() => {
@@ -129,19 +143,9 @@ export default function Profile() {
             title="Calendar"
           />
           <FaPlus
-            className={`cursor-pointer ${activeTab === "add" ? "text-primary" : ""}`}
-            onClick={() => setActiveTab("add")}
-            title="Add"
-          />
-          <FaPencilAlt
-            className={`cursor-pointer ${activeTab === "reviews" ? "text-primary" : ""}`}
-            onClick={() => setActiveTab("reviews")}
-            title="Reviews"
-          />
-          <FaShoppingBag
-            className={`cursor-pointer ${activeTab === "shop" ? "text-primary" : ""}`}
-            onClick={() => setActiveTab("shop")}
-            title="Shop"
+            className={`cursor-pointer ${activeTab === "posts" ? "text-primary" : ""}`}
+            onClick={() => setActiveTab("posts")}
+            title="Posts"
           />
         </div>
       </div>
@@ -165,23 +169,42 @@ export default function Profile() {
             )}
           </div>
         )}
-        {activeTab === "add" && <p>[Post creation form will go here]</p>}
-        {activeTab === "reviews" && <p>[User reviews will go here]</p>}
-        {activeTab === "shop" && <p>[Shop items will go here]</p>}
+        {activeTab === "posts" && (
+          <div>
+            <h2 className="text-xl font-bold mb-4">My Posts</h2>
+            {myPosts.length === 0 ? (
+              <p>No posts yet. Create one from the “New Post” button.</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {myPosts.map(p => (
+                  <Link
+                    key={p.id}
+                    to={`/post/${p.id}`}
+                    className="block aspect-square overflow-hidden rounded-xl border hover:ring hover:ring-primary/30"
+                  >
+                    {p.images?.[0]
+                      ? <img src={p.images[0]} alt="post cover" className="w-full h-full object-cover" />
+                      : <div className="w-full h-full flex items-center justify-center text-xs opacity-60">No Image</div>}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ---------- SAVED (BOOKMARKED) EVENTS ---------- */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Saved Events</h2>
-          {bookmarkedEvents.length > 0 && (
+          {/* {bookmarkedEvents.length > 0 && (
             <button
               className="btn btn-ghost btn-sm"
               onClick={() => clearBookmarks()} // BOOKMARKS_EVENT will handle UI refresh
             >
               Clear all
             </button>
-          )}
+          )} */}
         </div>
 
         {bookmarkedEvents.length > 0 ? (
@@ -256,7 +279,7 @@ export default function Profile() {
           </div>
         ) : (
           <div className="alert">
-            <span>No saved events yet. Go bookmark some from the Explorer!</span>
+            <span>No saved events yet. Go bookmark some from the Map!</span>
           </div>
         )}
       </div>
