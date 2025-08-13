@@ -1,5 +1,5 @@
 // pages/Navbar.jsx
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Home,
   Compass,
@@ -8,8 +8,6 @@ import {
   Plus,
   FileQuestionMark,
 } from "lucide-react";
-
-import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -149,14 +147,30 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* New Post Button */}
+      {/* New Post Dropdown */}
       <div className="mt-6">
-        <button className="w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-2xl transition-colors flex items-center justify-center gap-2">
-          <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-            <Plus size={16} className="text-red-400" />
-          </div>
-          <span>New Post</span>
-        </button>
+        <div className="dropdown w-full">
+          <label
+            tabIndex={0}
+            className="w-full bg-red-400 hover:bg-red-500 text-white font-medium py-3 px-4 rounded-2xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+              <Plus size={16} className="text-red-400" />
+            </div>
+            <span>New Post</span>
+          </label>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li>
+              <Link to="/new-post">New post</Link>
+            </li>
+            <li>
+              <Link to="/submit-event">Submit an event</Link>
+            </li>
+          </ul>
+        </div>
       </div>
 
       {/* Discrete Admin Login at the very bottom-left */}

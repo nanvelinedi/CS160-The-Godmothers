@@ -1,4 +1,4 @@
-import { Link, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Search from "./pages/search";
@@ -6,9 +6,13 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Profile from "./pages/profile";
 import Navbar from "./pages/navbar";
-import SubmitEvent from './pages/submitEvent';
+import SubmitEvent from "./pages/submitEvent";
 import SearchPage from './pages/searchpage';
 import FAQPage from './pages/faqpage'; // Import the FAQPage component
+import NewPost from "./pages/NewPost"; 
+import PostDetail from "./pages/PostDetail";
+import DevPostsJson from "./pages/DevPostsJson";
+
 
 export default function App() {
   return (
@@ -22,33 +26,16 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/submit" element={<SubmitEvent />} />
+            <Route path="/submit-event" element={<SubmitEvent />} />
             <Route path="/searchpage" element={<SearchPage />} />
             <Route path="/faqpage" element={<FAQPage />} /> {/* Add the FAQ route */}
+            <Route path="/new-post" element={<NewPost />} />
+            <Route path="/post/:id" element={<PostDetail />} />
+            <Route path="/post/:id" element={<PostDetail />} />
+            <Route path="/dev/posts" element={<DevPostsJson />} />
           </Routes>
         </div>
       </main>
     </div>
   );
 }
-// export default function App() {
-//   // const username = "John"; // Define the variable here
-
-//   return (
-//     <div className="flex min-h-screen bg-base-200">
-//       <Navbar></Navbar>
-
-//       {/* Main Page Content */}
-//       <div className="flex-1 p-6">
-//         <Routes>
-//           <Route path="/" element={<Home />} />
-//           <Route path="/search" element={<Search />} />
-//           <Route path="/login" element={<Login />} />
-//           <Route path="/signup" element={<Signup />} />
-//           <Route path="/profile" element={<Profile />} />
-//           <Route path="/submit" element={<SubmitEvent />} />
-//         </Routes>
-//       </div>
-//     </div>
-//   );
-// }
