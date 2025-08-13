@@ -11,6 +11,7 @@ import {
 } from "../lib/bookmarks";
 import UserPfp from "../../public/pfp1.png"; // Adjust extension and relative path as needed
 import { Images } from "lucide-react";
+// hello
 
 const ARTISTS = [
   {
@@ -198,9 +199,10 @@ export default function Profile() {
               {/* Event list */}
               <div className="flex-1 space-y-4 border-l-4 border-primary pl-6">
                 {upcomingEvents.map((event) => (
-                  <div
+                  <Link
                     key={event.id}
-                    className="flex items-center gap-4 bg-base-100 border rounded-xl shadow-sm p-2"
+                    to="/mart1-wizard" // Ensure the martUrl points to "/mart1-wizard"
+                    className="flex items-center gap-4 bg-base-100 border rounded-xl shadow-sm p-2 hover:shadow-md transition"
                   >
                     {/* Smaller date box */}
                     <div className="flex flex-col items-center justify-center w-20 h-20 bg-base-200 rounded-2xl">
@@ -244,7 +246,7 @@ export default function Profile() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
 
