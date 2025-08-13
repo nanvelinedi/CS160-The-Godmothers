@@ -8,6 +8,7 @@ import Profile from "./pages/profile";
 import Navbar from "./pages/navbar";
 import SubmitEvent from './pages/submitEvent';
 import SearchPage from './pages/searchpage';
+import FAQPage from './pages/faqpage'; // Import the FAQPage component
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/submit" element={<SubmitEvent />} />
             <Route path="/searchpage" element={<SearchPage />} />
+            <Route path="/faqpage" element={<FAQPage />} /> {/* Add the FAQ route */}
           </Routes>
         </div>
       </main>
