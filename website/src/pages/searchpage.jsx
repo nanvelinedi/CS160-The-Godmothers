@@ -6,7 +6,7 @@ export const ARTISTS = [
     id: "a1",
     name: "Luna Sketches",
     bio: "I’m Luna, a 27-year-old illustrator from San Francisco who loves blending dreamy fantasy with everyday city life in my art. I grew up sketching in every corner of the Bay, inspired by street art, foggy mornings, and colorful markets. These days, I work mostly in digital but still love the feel of pen and watercolor, creating pieces that capture magic in the mundane. When I’m not drawing, you’ll probably find me wandering Golden Gate Park, browsing art fairs, or hanging out with my cat, Mochi, who insists on being part of every livestream.",
-    profileUrl: "blah", // <--- link to profile page (route or file)
+    profileUrl: "/luna-pfp", // <--- link to profile page (route or file)
     avatarIMG: "../public/pfp1.png",
     tags: ["fantasy", "magic", "harry potter", "art"],
     posts: [
