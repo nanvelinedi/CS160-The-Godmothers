@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef } from "react";
 
 // =============== Hardcoded demo data (add your own URLs) ==================
-const ARTISTS = [
+export const ARTISTS = [
   {
     id: "a1",
     name: "Luna Sketches",
@@ -492,3 +492,5 @@ export default function SearchPageRetroWithMartImages() {
     </div>
   );
 }
+
+
