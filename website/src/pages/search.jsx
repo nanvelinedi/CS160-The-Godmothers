@@ -4,9 +4,9 @@ import { createPortal } from "react-dom";
 import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import marketsData from "../data/markets.json";
+
 import { getBookmarks, toggleBookmark as storeToggle, BOOKMARKS_EVENT } from "../lib/bookmarks";
 import { getApprovedEvents, EVENTS_CHANGED } from "../lib/eventStorage";
-
 
 // Map config
 mapboxgl.accessToken =
@@ -18,8 +18,10 @@ const DEFAULT_ZOOM = 11;
 
 // Utils
 function haversineKm([lng1, lat1], [lng2, lat2]) {
-  const R = 6371, toRad = (d) => (d * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1), dLng = toRad(lng2 - lng1);
+  const R = 6371,
+    toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1),
+    dLng = toRad(lng2 - lng1);
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
@@ -27,19 +29,33 @@ function haversineKm([lng1, lat1], [lng2, lat2]) {
 }
 function makeCircle([lng, lat], radiusKm, steps = 64) {
   const coords = [];
-  const R = 6371, d = radiusKm / R;
-  const latR = (lat * Math.PI) / 180, lngR = (lng * Math.PI) / 180;
+  const R = 6371,
+    d = radiusKm / R;
+  const latR = (lat * Math.PI) / 180,
+    lngR = (lng * Math.PI) / 180;
   for (let i = 0; i <= steps; i++) {
     const b = (i * 2 * Math.PI) / steps;
-    const lat2 = Math.asin(Math.sin(latR) * Math.cos(d) + Math.cos(latR) * Math.sin(d) * Math.cos(b));
-    const lng2 = lngR + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(latR), Math.cos(d) - Math.sin(latR) * Math.sin(lat2));
+    const lat2 = Math.asin(
+      Math.sin(latR) * Math.cos(d) + Math.cos(latR) * Math.sin(d) * Math.cos(b)
+    );
+    const lng2 =
+      lngR +
+      Math.atan2(
+        Math.sin(b) * Math.sin(d) * Math.cos(latR),
+        Math.cos(d) - Math.sin(latR) * Math.sin(lat2)
+      );
     coords.push([(lng2 * 180) / Math.PI, (lat2 * 180) / Math.PI]);
   }
-  return { type: "Feature", geometry: { type: "Polygon", coordinates: [coords] }, properties: {} };
+  return {
+    type: "Feature",
+    geometry: { type: "Polygon", coordinates: [coords] },
+    properties: {},
+  };
 }
 function boundsFromPolygon(feature) {
   const b = new mapboxgl.LngLatBounds();
-  for (const [lng, lat] of feature.geometry.coordinates[0]) b.extend([lng, lat]);
+  for (const [lng, lat] of feature.geometry.coordinates[0])
+    b.extend([lng, lat]);
   return b;
 }
 
@@ -56,16 +72,28 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (abortRef.current) { abortRef.current.abort(); abortRef.current = null; }
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
 
     const qTrim = q.trim();
-    if (qTrim.length < 3) { setItems([]); setOpen(false); setActive(-1); return; }
+    if (qTrim.length < 3) {
+      setItems([]);
+      setOpen(false);
+      setActive(-1);
+      return;
+    }
 
     debounceRef.current = setTimeout(async () => {
       try {
         const ctrl = new AbortController();
         abortRef.current = ctrl;
-        const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(qTrim)}.json`);
+        const url = new URL(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+            qTrim
+          )}.json`
+        );
         url.searchParams.set("access_token", mapboxgl.accessToken);
         url.searchParams.set("autocomplete", "true");
         url.searchParams.set("limit", "6");
@@ -73,7 +101,7 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
         const res = await fetch(url.toString(), { signal: ctrl.signal });
         if (!res.ok) throw new Error("geocoding error");
         const data = await res.json();
-        const parsed = (data.features || []).map(f => ({
+        const parsed = (data.features || []).map((f) => ({
           id: f.id,
           name: f.text,
           context: f.place_name,
@@ -85,16 +113,25 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
       } catch (e) {
         if (e.name !== "AbortError") {
           console.error("geocode failed", e);
-          setItems([]); setOpen(false); setActive(-1);
+          setItems([]);
+          setOpen(false);
+          setActive(-1);
         }
-      } finally { abortRef.current = null; }
+      } finally {
+        abortRef.current = null;
+      }
     }, 200);
 
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [q]);
 
   useEffect(() => {
-    const onDoc = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false); };
+    const onDoc = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target))
+        setOpen(false);
+    };
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
@@ -106,20 +143,33 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
     const text = item.context || item.name;
     setQ(text);
     inputRef.current && (inputRef.current.value = text);
-    setOpen(false); setActive(-1);
+    setOpen(false);
+    setActive(-1);
   };
 
   const onKeyDown = (e) => {
-    if (!open && e.key === "Enter") { setTimeout(() => choose(0), 50); return; }
+    if (!open && e.key === "Enter") {
+      setTimeout(() => choose(0), 50);
+      return;
+    }
     if (!open) return;
-    if (e.key === "ArrowDown") { e.preventDefault(); setActive(a => Math.min(a + 1, items.length - 1)); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); setActive(a => Math.max(a - 1, 0)); }
-    else if (e.key === "Enter") { e.preventDefault(); choose(active >= 0 ? active : 0); }
-    else if (e.key === "Escape") { setOpen(false); }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActive((a) => Math.min(a + 1, items.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((a) => Math.max(a - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      choose(active >= 0 ? active : 0);
+    } else if (e.key === "Escape") {
+      setOpen(false);
+    }
   };
 
   return (
     <div className="relative" ref={wrapRef}>
+
       <label className="input input-bordered rounded-none bg-base-100 flex items-center gap-2 w-full">
         <svg className="h-[1em] opacity-60" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
@@ -133,15 +183,22 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
           placeholder={placeholder}
           className="bg-transparent outline-none w-full h-12"
           value={q}
-          onChange={(e)=>setQ(e.target.value)}
-          onFocus={()=>{ if (items.length) setOpen(true); }}
+          onChange={(e) => setQ(e.target.value)}
+          onFocus={() => {
+            if (items.length) setOpen(true);
+          }}
           onKeyDown={onKeyDown}
         />
         {q && (
           <button
             type="button"
             className="btn btn-ghost btn-circle btn-sm"
-            onClick={()=>{ setQ(""); setItems([]); setOpen(false); inputRef.current?.focus(); }}
+            onClick={() => {
+              setQ("");
+              setItems([]);
+              setOpen(false);
+              inputRef.current?.focus();
+            }}
             aria-label="Clear"
           >
             ✕
@@ -155,9 +212,9 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
             <li key={it.id}>
               <a
                 className={i === active ? "bg-base-200" : ""}
-                onMouseEnter={()=>setActive(i)}
-                onMouseDown={(e)=>e.preventDefault()}
-                onClick={()=>choose(i)}
+                onMouseEnter={() => setActive(i)}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => choose(i)}
               >
                 <div className="flex flex-col">
                   <span className="font-medium">{it.name}</span>
@@ -166,7 +223,9 @@ function GeoSearch({ onSelect, placeholder = "Search location" }) {
               </a>
             </li>
           ))}
-          {items.length === 0 && <li className="opacity-60 px-2 py-1">No results</li>}
+          {items.length === 0 && (
+            <li className="opacity-60 px-2 py-1">No results</li>
+          )}
         </ul>
       )}
     </div>
@@ -262,7 +321,9 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
           <div className="card-body p-4 flex flex-col justify-between h-full">
             <div className="flex-1 min-h-0">
               <div className="flex items-start justify-between mb-2">
-                <h3 className="card-title text-base line-clamp-2 flex-1 mr-2">{event.name}</h3>
+                <h3 className="card-title text-base line-clamp-2 flex-1 mr-2">
+                  {event.name}
+                </h3>
                 <button
                   className={`btn btn-ghost btn-sm btn-circle ${
                     isBookmarked ? "text-warning" : "opacity-60 hover:opacity-100"
@@ -274,8 +335,18 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                   title={isBookmarked ? "Remove bookmark" : "Bookmark event"}
                   aria-label={isBookmarked ? "Remove bookmark" : "Bookmark event"}
                 >
-                  <svg className="w-4 h-4" fill={isBookmarked ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  <svg
+                    className="w-4 h-4"
+                    fill={isBookmarked ? "currentColor" : "none"}
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                    />
                   </svg>
                 </button>
               </div>
@@ -284,6 +355,7 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
             <div className="card-actions flex-shrink-0 mt-2 flex items-center justify-between">
               <div className="flex gap-2 flex-wrap">
                 <span className="badge badge-outline text-xs">
+
                   {event.date ? new Date(event.date).toLocaleDateString() : "TBA"}
                 </span>
                 {event.tags?.slice(0, 2).map((t) => (
@@ -299,7 +371,6 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
           </div>
         </div>
       </div>
-
       {/* Popup rendered to body so it never gets clipped */}
       {showPopup &&
         createPortal(
@@ -374,6 +445,7 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                   </div>
                 )}
                 <div className="flex items-start gap-2">
+
                   <svg className="w-4 h-4 mt-0.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -397,6 +469,7 @@ function EventCard({ event, isSelected, onSelect, onBookmark, isBookmarked }) {
                   </div>
                 )}
               </div>
+
 
               {/* Bio */}
               {bio && (
@@ -440,10 +513,12 @@ export default function Search() {
   const mapRef = useRef(null);
   const mapEl = useRef(null);
 
-  const [origin, setOrigin] = useState(DEFAULT_ORIGIN);   // [lng, lat]
+  const [origin, setOrigin] = useState(DEFAULT_ORIGIN); // [lng, lat]
   const [radiusKm, setRadiusKm] = useState(10);
   const [selectedId, setSelectedId] = useState(null);
-  const [bookmarkedIds, setBookmarkedIds] = useState(() => new Set(getBookmarks()));
+  const [bookmarkedIds, setBookmarkedIds] = useState(
+    () => new Set(getBookmarks())
+  );
 
   const [approved, setApproved] = useState(() => getApprovedEvents());
 
@@ -478,8 +553,8 @@ export default function Search() {
 
 
   const toggleBookmark = (eventId) => {
-    const next = storeToggle(eventId);      // returns array of strings
-    setBookmarkedIds(new Set(next));        // keep Set locally for fast lookup
+    const next = storeToggle(eventId); // returns array of strings
+    setBookmarkedIds(new Set(next)); // keep Set locally for fast lookup
   };
 
   useEffect(() => {
@@ -488,7 +563,6 @@ export default function Search() {
     return () => window.removeEventListener(BOOKMARKS_EVENT, onChange);
   }, []);
 
-
   // --- Carousel refs/state ---
   const carouselRef = useRef(null);
   const itemRefs = useRef(new Map());
@@ -496,8 +570,14 @@ export default function Search() {
   const onCarouselKeyDown = (e) => {
     const el = carouselRef.current;
     if (!el) return;
-    if (e.key === "ArrowRight") { e.preventDefault(); el.scrollBy({ left: 336, behavior: "smooth" }); }
-    if (e.key === "ArrowLeft")  { e.preventDefault(); el.scrollBy({ left: -336, behavior: "smooth" }); }
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      el.scrollBy({ left: 336, behavior: "smooth" });
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      el.scrollBy({ left: -336, behavior: "smooth" });
+    }
   };
 
   const onCarouselWheel = (e) => {
@@ -512,7 +592,12 @@ export default function Search() {
   useEffect(() => {
     if (!selectedId) return;
     const el = itemRefs.current.get(selectedId);
-    if (el) el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    if (el)
+      el.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
   }, [selectedId]);
 
   // init map + sources/layers
@@ -527,18 +612,21 @@ export default function Search() {
     mapRef.current = map;
 
     map.on("load", () => {
-      map.addSource("amf-radius", { type: "geojson", data: makeCircle(origin, radiusKm) });
+      map.addSource("amf-radius", {
+        type: "geojson",
+        data: makeCircle(origin, radiusKm),
+      });
       map.addLayer({
         id: "amf-radius-fill",
         type: "fill",
         source: "amf-radius",
-        paint: { "fill-color": "#22d3ee", "fill-opacity": 0.12 }
+        paint: { "fill-color": "#22d3ee", "fill-opacity": 0.12 },
       });
       map.addLayer({
         id: "amf-radius-line",
         type: "line",
         source: "amf-radius",
-        paint: { "line-color": "#0ea5e9", "line-width": 2 }
+        paint: { "line-color": "#0ea5e9", "line-width": 2 },
       });
 
       map.addSource("amf-events", {
@@ -554,13 +642,13 @@ export default function Search() {
             "case",
             ["==", ["get", "id"], selectedId || ""],
             "#ec4899",
-            "#f472b6"
+            "#f472b6",
           ],
           "circle-radius": [
             "case",
             ["==", ["get", "id"], selectedId || ""],
             8,
-            6
+            6,
           ],
           "circle-stroke-color": "#ffffff",
           "circle-stroke-width": 2,
@@ -570,7 +658,11 @@ export default function Search() {
 
       map.addSource("amf-origin", {
         type: "geojson",
-        data: { type: "Feature", geometry: { type: "Point", coordinates: origin }, properties: {} },
+        data: {
+          type: "Feature",
+          geometry: { type: "Point", coordinates: origin },
+          properties: {},
+        },
       });
       map.addLayer({
         id: "amf-origin-circle",
@@ -584,8 +676,12 @@ export default function Search() {
         },
       });
 
-      map.on("mouseenter", "amf-events-circle", () => { map.getCanvas().style.cursor = "pointer"; });
-      map.on("mouseleave", "amf-events-circle", () => { map.getCanvas().style.cursor = ""; });
+      map.on("mouseenter", "amf-events-circle", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "amf-events-circle", () => {
+        map.getCanvas().style.cursor = "";
+      });
       map.on("click", "amf-events-circle", (e) => {
         const f = e.features && e.features[0];
         if (!f) return;
@@ -606,7 +702,7 @@ export default function Search() {
     if (eventsSource) {
       const fc = {
         type: "FeatureCollection",
-        features: events.map(m => ({
+        features: events.map((m) => ({
           type: "Feature",
           geometry: { type: "Point", coordinates: [m.lng, m.lat] },
           properties: { id: m.id, name: m.name },
@@ -619,42 +715,41 @@ export default function Search() {
           "case",
           ["==", ["get", "id"], selectedId || ""],
           "#ec4899",
-          "#f472b6"
+          "#f472b6",
         ]);
         map.setPaintProperty("amf-events-circle", "circle-radius", [
           "case",
           ["==", ["get", "id"], selectedId || ""],
           8,
-          6
+          6,
         ]);
       }
     }
   };
 
   // update radius + origin + events when deps change
- // update radius + origin + events when deps change
-useEffect(() => {
-  const map = mapRef.current;
-  if (!map || !map.isStyleLoaded()) return;
+  // update radius + origin + events when deps change
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
 
-  const radiusSource = map.getSource("amf-radius");
-  if (radiusSource) radiusSource.setData(makeCircle(origin, radiusKm));
+    const radiusSource = map.getSource("amf-radius");
+    if (radiusSource) radiusSource.setData(makeCircle(origin, radiusKm));
 
-  const originSource = map.getSource("amf-origin");
-  if (originSource) originSource.setData({
-    type: "Feature",
-    geometry: { type: "Point", coordinates: origin },
-    properties: {}
-  });
+    const originSource = map.getSource("amf-origin");
+    if (originSource)
+      originSource.setData({
+        type: "Feature",
+        geometry: { type: "Point", coordinates: origin },
+        properties: {},
+      });
 
-  updateEventsOnMap(map, filtered, selectedId);
+    updateEventsOnMap(map, filtered, selectedId);
 
-  // zoom to new bounds when radius changes
-  const bounds = boundsFromPolygon(makeCircle(origin, radiusKm));
-  map.fitBounds(bounds, { padding: 80, duration: 600 });
-
-}, [origin, radiusKm, filtered, selectedId]);
-
+    // zoom to new bounds when radius changes
+    const bounds = boundsFromPolygon(makeCircle(origin, radiusKm));
+    map.fitBounds(bounds, { padding: 80, duration: 600 });
+  }, [origin, radiusKm, filtered, selectedId]);
 
   // fit to circle when radius changes
   useEffect(() => {
@@ -672,9 +767,9 @@ useEffect(() => {
     map.fitBounds(bounds, { padding: 80, duration: 600 });
   }, [origin, radiusKm]);
 
-
   function useMyLocation() {
-    if (!navigator.geolocation) return alert("Geolocation not supported on this device.");
+    if (!navigator.geolocation)
+      return alert("Geolocation not supported on this device.");
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const newOrigin = [pos.coords.longitude, pos.coords.latitude];
@@ -740,31 +835,46 @@ useEffect(() => {
         </div>
       )}
     </div>
-
-    {/* Carousel container: keeps overflow inside itself */}
-    {/* Results list — EXACT daisyUI carousel */}
-    {/* Results list — pure Tailwind horizontal scroller */}
-    <div className="max-w-[900px] w-[900px] overflow-x-auto mx-auto rounded-box bg-base-100 shadow p-2">
-      <div className="flex gap-4 snap-x snap-mandatory">
-        {filtered.map((m) => (
-          <div
-            key={m.id}
-            className="shrink-0 snap-start w-80"
-          >
-            <EventCard
-              event={m}
-              isSelected={selectedId === m.id}
-              onSelect={(id) => {
-                setSelectedId(id);
-                mapRef.current?.flyTo({ center: [m.lng, m.lat], zoom: 13, duration: 800 });
-              }}
-              onBookmark={toggleBookmark}
-              isBookmarked={bookmarkedIds.has(String(m.id))}
-            />
+      {/* Results header / empty */}
+      <div className="flex items-center justify-between min-w-0">
+        <p className="text-sm opacity-70">
+          {filtered.length} market(s) within {radiusKm} km
+        </p>
+        {filtered.length === 0 && (
+          <div className="text-sm">
+            Sorry, no events nearby.{" "}
+            <a className="link link-primary" href="/submit">
+              Click here to submit an event!
+            </a>
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* Carousel container: keeps overflow inside itself */}
+      {/* Results list — EXACT daisyUI carousel */}
+      {/* Results list — pure Tailwind horizontal scroller */}
+      <div className="max-w-[900px] w-[900px] overflow-x-auto mx-auto rounded-box bg-base-100 shadow p-2">
+        <div className="flex gap-4 snap-x snap-mandatory">
+          {filtered.map((m) => (
+            <div key={m.id} className="shrink-0 snap-start w-80">
+              <EventCard
+                event={m}
+                isSelected={selectedId === m.id}
+                onSelect={(id) => {
+                  setSelectedId(id);
+                  mapRef.current?.flyTo({
+                    center: [m.lng, m.lat],
+                    zoom: 13,
+                    duration: 800,
+                  });
+                }}
+                onBookmark={toggleBookmark}
+                isBookmarked={bookmarkedIds.has(String(m.id))}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
