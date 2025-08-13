@@ -129,7 +129,7 @@ export default function Navbar() {
               <span>History</span>
             </Link>
           </li> */}
-          <li>
+          {/* <li>
             <Link
               to="/"
               className="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
@@ -137,7 +137,7 @@ export default function Navbar() {
               <Bookmark size={20} />
               <span>Saved</span>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link
               to="/faqpage"

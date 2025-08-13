@@ -1,7 +1,7 @@
 import { useMemo, useState, useRef } from "react";
 
 // [ ] add url ===============  demo data (add urls later) ==================
-const ARTISTS = [
+export const ARTISTS = [
   {
     id: "a1",
     name: "Luna Sketches",
@@ -547,5 +547,3 @@ export default function SearchPageRetroWithMartImages() {
     </div>
   );
 }
-
-

@@ -6,12 +6,12 @@ import marketsData from "../data/markets.json";
 import { getAllPosts, POSTS_EVENT } from "../lib/postStore";
 import {
   getBookmarks,
-  // clearBookmarks,
+  clearBookmarks,
   BOOKMARKS_EVENT,
   toggleBookmark as storeToggle,
 } from "../lib/bookmarks";
 import { ARTISTS } from "./searchpage"; // Import your unified artist/post/mart data
-import UserPfp from '../images/User_pfp.png';  // Adjust extension and relative path as needed
+import UserPfp from "../images/User_pfp.png"; // Adjust extension and relative path as needed
 
 // Helper: flatten marts from ARTISTS
 const flattenMarts = (artists) =>
@@ -35,7 +35,7 @@ export default function Profile() {
 
   // Edit Profile modal
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [profileName, setProfileName] = useState("New User");
+  const [profileName, setProfileName] = useState("John");
   const [bio, setBio] = useState("No bio yet...");
   const [role, setRole] = useState("Artist");
   const [profileImage, setProfileImage] = useState(UserPfp); // Use imported image
@@ -129,10 +129,7 @@ export default function Profile() {
             <h1 className="text-3xl font-bold">{profileName}</h1>
             <p className="text-lg text-base-content/70">{role}</p>
             <div className="mt-3 flex gap-2">
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={handleFollow}
-              >
+              <button className="btn btn-primary btn-sm" onClick={handleFollow}>
                 {isFollowing ? "Following" : "Follow"}
               </button>
               <button
@@ -206,9 +203,7 @@ export default function Profile() {
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold truncate">
-                        {event.name}
-                      </div>
+                      <div className="font-semibold truncate">{event.name}</div>
                       <div className="text-xs opacity-70">
                         {event.location} •{" "}
                         {new Date(event.date).toLocaleDateString()}
@@ -221,10 +216,7 @@ export default function Profile() {
                       {event.tags && (
                         <div className="flex gap-1 mt-1 flex-wrap">
                           {event.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="badge badge-xs"
-                            >
+                            <span key={tag} className="badge badge-xs">
                               {tag}
                             </span>
                           ))}
@@ -246,10 +238,7 @@ export default function Profile() {
                   </div>
                   <div className="grid grid-cols-7 gap-2 text-sm">
                     {["M", "T", "W", "T", "F", "S", "S"].map((d) => (
-                      <div
-                        key={d}
-                        className="font-bold text-center opacity-50"
-                      >
+                      <div key={d} className="font-bold text-center opacity-50">
                         {d}
                       </div>
                     ))}
@@ -286,10 +275,7 @@ export default function Profile() {
                         const isToday = d === today;
                         const hasEvent = eventDaySet.has(d);
                         cells.push(
-                          <div
-                            key={d}
-                            className="relative text-center"
-                          >
+                          <div key={d} className="relative text-center">
                             <span
                               className={
                                 isToday
@@ -355,10 +341,7 @@ export default function Profile() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold">Saved Events</h2>
           {bookmarkedEvents.length > 0 && (
-            <button
-              className="btn btn-ghost btn-sm"
-              onClick={clearBookmarks}
-            >
+            <button className="btn btn-ghost btn-sm" onClick={clearBookmarks}>
               Clear all
             </button>
           )}
@@ -367,13 +350,12 @@ export default function Profile() {
           <div className="max-w-[900px] w-[900px] overflow-x-auto mx-auto rounded-box bg-base-100 shadow p-2">
             <div className="flex gap-4 snap-x snap-mandatory">
               {bookmarkedEvents.map((ev) => (
-                <div
-                  key={ev.id}
-                  className="shrink-0 snap-start w-80"
-                >
+                <div key={ev.id} className="shrink-0 snap-start w-80">
                   <div
                     className={`card bg-base-100 shadow relative transition cursor-pointer ${
-                      selectedSavedEventId === ev.id ? "ring-2 ring-primary" : "hover:shadow-md"
+                      selectedSavedEventId === ev.id
+                        ? "ring-2 ring-primary"
+                        : "hover:shadow-md"
                     }`}
                     onClick={() => setSelectedSavedEventId(ev.id)}
                   >
@@ -388,7 +370,19 @@ export default function Profile() {
                         aria-label="Remove bookmark"
                         title="Remove bookmark"
                       >
-                        <svg className="w-4 h-4" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                        <svg
+                          className="w-4 h-4"
+                          fill="currentColor"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                          />
+                        </svg>
                       </button>
                       {ev.image && (
                         <img
@@ -397,13 +391,23 @@ export default function Profile() {
                           className="w-full h-32 object-cover rounded mb-2"
                         />
                       )}
-                      <h3 className="card-title text-base line-clamp-2 mb-1">{ev.name}</h3>
-                      <p className="opacity-80 text-sm mb-2 line-clamp-2">{ev.address}</p>
-                      <span className="badge badge-outline text-xs mb-2">{ev.date ? new Date(ev.date).toLocaleDateString() : "Date TBA"}</span>
+                      <h3 className="card-title text-base line-clamp-2 mb-1">
+                        {ev.name}
+                      </h3>
+                      <p className="opacity-80 text-sm mb-2 line-clamp-2">
+                        {ev.address}
+                      </p>
+                      <span className="badge badge-outline text-xs mb-2">
+                        {ev.date
+                          ? new Date(ev.date).toLocaleDateString()
+                          : "Date TBA"}
+                      </span>
                       {ev.tags?.length && (
                         <div className="mt-1 flex gap-1 flex-wrap">
                           {ev.tags.slice(0, 3).map((t) => (
-                            <span key={t} className="badge badge-sm">{t}</span>
+                            <span key={t} className="badge badge-sm">
+                              {t}
+                            </span>
                           ))}
                         </div>
                       )}
@@ -415,7 +419,9 @@ export default function Profile() {
           </div>
         ) : (
           <div className="alert">
-            <span>No saved events yet. Go bookmark some from the Explorer!</span>
+            <span>
+              No saved events yet. Go bookmark some from the Explorer!
+            </span>
           </div>
         )}
       </div>
@@ -463,10 +469,7 @@ export default function Profile() {
               >
                 Cancel
               </button>
-              <button
-                className="btn btn-primary"
-                onClick={handleSaveProfile}
-              >
+              <button className="btn btn-primary" onClick={handleSaveProfile}>
                 Save
               </button>
             </div>
