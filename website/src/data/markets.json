@@ -18,24 +18,6 @@
     "tags": ["art", "handmade", "outdoor"]
   },
   {
-    "id": "sf-ferry-plaza-2025",
-    "name": "Ferry Plaza Farmers Market",
-    "lat": 37.7955,
-    "lng": -122.3937,
-    "address": "1 Ferry Building, San Francisco, CA",
-    "date": "2025-09-20",
-    "time": "8:00–14:00",
-    "price": "Free",
-    "website": "https://cuesa.org/markets/ferry-plaza-farmers-market",
-    "bio": "A vibrant outdoor market featuring fresh produce, artisanal goods, and live cooking demos with a view of the Bay Bridge.",
-    "images": [
-      "/images/ferry-plaza/1.jpg",
-      "/images/ferry-plaza/2.jpg",
-      "/images/ferry-plaza/3.jpg"
-    ],
-    "tags": ["food", "outdoor", "local"]
-  },
-  {
     "id": "sf-treasurefest-2025",
     "name": "TreasureFest",
     "lat": 37.8262,
@@ -68,5 +50,80 @@
       "/images/sunday-streets/3.jpg"
     ],
     "tags": ["community", "outdoor", "family"]
-  }
+  },
+  {
+    "id": "quartz-oakland",
+    "name": "Quartz Oakland",
+    "lat": 37.8459,
+    "lng": -122.2855,
+    "address": "1121 64th Street, Oakland, CA 94608, United States of America",
+    "date": "2025-12-14",
+    "time": "9:00AM - 6:00PM",
+    "price": "$0–$50 sliding scale based on income",
+    "website": "https://www.instagram.com/quartzoakland/",
+    "bio": "A vibrant, queer-friendly marketplace spotlighting local artists and makers. Discover one-of-a-kind handmade goods, art prints, and jewelry in a supportive and welcoming community. Perfect for finding unique gifts and connecting with Oakland’s creative scene.",
+    "images": [],
+    "tags": ["art", "market", "outdoor"]
+  },
+  {
+    "id": "castro-art-mart",
+    "name": "Castro Art Mart",
+    "lat": 37.7646,
+    "lng": -122.4333,
+    "address": "270 Noe St, San Francisco, CA 94114",
+    "date": "2025-8-16",
+    "time": "12:00PM - 10:PM",
+    "price": "$75",
+    "website": "https://artyhoodsf.com/",
+    "bio": "Performances, drag shows; requires Artyhood account to register.",
+    "images": [],
+    "tags": ["art", "market", "outdoor"]
+  },
+  {
+    "id": "telegraph-holiday-fair",
+    "name": "Telegraph Holiday Fair",
+    "lat": 37.8679,
+    "lng": -122.2591,
+    "address": "2344 Telegraph Avenue, Berkeley, CA 94720",
+    "date": "2025-10-24",
+    "time": "11:00 AM – 6:00 PM",
+    "price": "$150 per day (discount for multiple days)",
+    "website": "https://www.telegraphfair.com/",
+    "bio": "A beloved Berkeley holiday tradition, transforming Telegraph Avenue into a festive open-air market. Shop from dozens of artisans selling gifts, crafts, and seasonal treats. Enjoy live music, street performers, and the warm holiday spirit.",
+    "images": [],
+    "tags": ["art", "market", "outdoor"]
+  },
+  {
+    "id": "sj-made-events",
+    "name": "SJ Made Events",
+    "lat": "",
+    "lng": "",
+    "address": "",
+    "date": "",
+    "time": "",
+    "price": "$300–$800 (varies by market and booth size)",
+    "website": "https://www.sanjosemade.com/",
+    "bio": "Organizer with multiple events (summer, holiday, etc.). Tends toward anime/kawaii vendors.",
+    "images": [],
+    "tags": ["art", "market", "outdoor"]
+  },
+  {
+  "id": "mini-art-mart-japantown",
+  "name": "Mini Art Mart",
+  "lat": 37.7845,
+  "lng": -122.4297,
+  "address": "1610 Geary Boulevard, San Francisco, CA 94115",
+  "date": "2025-10-10",
+  "time": "11:00 AM – 5:00 PM",
+  "price": "2025-10-6",
+  "website": "https://www.instagram.com/mini_art_mart/",
+  "bio": "A cozy monthly market nestled inside the Kinokuniya Mall, where Japanese-inspired local artists bring unique handmade creations to the heart of SF’s Japantown. Find everything from anime art prints to handcrafted accessories in a welcoming cultural setting.",
+  "images": [
+     "src/images/mini-art/1.jpeg",
+     "src/images/mini-art/2.jpeg",
+     "src/images/mini-art/3.jpeg"
+  ],
+  "tags": ["art", "market", "Japanese-inspired"]
+}
+
 ]

@@ -321,7 +321,7 @@ export default function Profile() {
               {myPosts.map((p) => (
                 <Link
                   key={p.id}
-                  to="/mart1-wizard"
+                  to={`/post/${p.id}`}
                   className="block aspect-square overflow-hidden rounded-xl border hover:ring hover:ring-primary/30"
                 >
                   {p.images?.[0] ? (
