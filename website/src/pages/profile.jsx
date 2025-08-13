@@ -1,19 +1,34 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaPlus, FaPencilAlt, FaShoppingBag } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaPlus,
+  // FaPencilAlt,
+  // FaShoppingBag,
+} from "react-icons/fa";
 import marketsData from "../data/markets.json";
 import { getAllPosts, POSTS_EVENT } from "../lib/postStore";
 import {
   getBookmarks,
-  clearBookmarks,
+  // clearBookmarks,
   BOOKMARKS_EVENT,
   toggleBookmark as storeToggle,
 } from "../lib/bookmarks";
 
 /* ---- Demo calendar data (not related to bookmarks) ---- */
 const sampleEvents = [
-  { id: 1, date: "2025-08-12", title: "SF Art Mart", time: "9:00 AM - 5:00 PM" },
-  { id: 2, date: "2025-08-15", title: "Berkeley Crafts Fair", time: "11:00 AM - 6:00 PM" },
+  {
+    id: 1,
+    date: "2025-08-12",
+    title: "SF Art Mart",
+    time: "9:00 AM - 5:00 PM",
+  },
+  {
+    id: 2,
+    date: "2025-08-15",
+    title: "Berkeley Crafts Fair",
+    time: "11:00 AM - 6:00 PM",
+  },
 ];
 
 export default function Profile() {
@@ -28,7 +43,9 @@ export default function Profile() {
   const [profileName, setProfileName] = useState("New User");
   const [bio, setBio] = useState("No bio yet...");
   const [role, setRole] = useState("Artist");
-  const [profileImage, setProfileImage] = useState("https://placehold.co/150x150");
+  const [profileImage, setProfileImage] = useState(
+    "https://placehold.co/150x150"
+  );
 
   /* ===== Bookmarks: live-sync with localStorage (same helpers as Search) ===== */
   const [bookmarksVersion, setBookmarksVersion] = useState(0);
@@ -36,7 +53,7 @@ export default function Profile() {
   // My Posts refresh when posts are saved
   const [postsVersion, setPostsVersion] = useState(0);
   useEffect(() => {
-    const onPosts = () => setPostsVersion(v => v + 1);
+    const onPosts = () => setPostsVersion((v) => v + 1);
     window.addEventListener(POSTS_EVENT, onPosts);
     window.addEventListener("focus", onPosts); // refresh when returning from New Post page
     return () => {
@@ -48,7 +65,7 @@ export default function Profile() {
 
   // Listen for global bookmark changes (Search page, other tabs, etc.)
   useEffect(() => {
-    const onChange = () => setBookmarksVersion(v => v + 1);
+    const onChange = () => setBookmarksVersion((v) => v + 1);
     window.addEventListener(BOOKMARKS_EVENT, onChange);
     return () => window.removeEventListener(BOOKMARKS_EVENT, onChange);
   }, []);
@@ -61,7 +78,7 @@ export default function Profile() {
 
   // Map IDs → full event objects from markets.json
   const bookmarkedEvents = useMemo(
-    () => (marketsData || []).filter(m => bookmarkedIds.has(String(m.id))),
+    () => (marketsData || []).filter((m) => bookmarkedIds.has(String(m.id))),
     [bookmarkedIds]
   );
 
@@ -71,15 +88,17 @@ export default function Profile() {
       setSelectedSavedEventId(null);
     } else if (
       selectedSavedEventId !== null &&
-      !bookmarkedEvents.some(e => String(e.id) === String(selectedSavedEventId))
+      !bookmarkedEvents.some(
+        (e) => String(e.id) === String(selectedSavedEventId)
+      )
     ) {
       setSelectedSavedEventId(null);
     }
   }, [bookmarkedEvents, selectedSavedEventId]);
 
   const handleFollow = () => {
-    setIsFollowing(f => !f);
-    setFollowers(prev => (isFollowing ? prev - 1 : prev + 1));
+    setIsFollowing((f) => !f);
+    setFollowers((prev) => (isFollowing ? prev - 1 : prev + 1));
   };
 
   const handleSaveProfile = () => {
@@ -138,12 +157,16 @@ export default function Profile() {
         {/* Nav Tabs */}
         <div className="flex gap-6 mt-6 text-2xl">
           <FaCalendarAlt
-            className={`cursor-pointer ${activeTab === "calendar" ? "text-primary" : ""}`}
+            className={`cursor-pointer ${
+              activeTab === "calendar" ? "text-primary" : ""
+            }`}
             onClick={() => setActiveTab("calendar")}
             title="Calendar"
           />
           <FaPlus
-            className={`cursor-pointer ${activeTab === "posts" ? "text-primary" : ""}`}
+            className={`cursor-pointer ${
+              activeTab === "posts" ? "text-primary" : ""
+            }`}
             onClick={() => setActiveTab("posts")}
             title="Posts"
           />
@@ -176,15 +199,23 @@ export default function Profile() {
               <p>No posts yet. Create one from the “New Post” button.</p>
             ) : (
               <div className="grid grid-cols-3 gap-2">
-                {myPosts.map(p => (
+                {myPosts.map((p) => (
                   <Link
                     key={p.id}
                     to={`/post/${p.id}`}
                     className="block aspect-square overflow-hidden rounded-xl border hover:ring hover:ring-primary/30"
                   >
-                    {p.images?.[0]
-                      ? <img src={p.images[0]} alt="post cover" className="w-full h-full object-cover" />
-                      : <div className="w-full h-full flex items-center justify-center text-xs opacity-60">No Image</div>}
+                    {p.images?.[0] ? (
+                      <img
+                        src={p.images[0]}
+                        alt="post cover"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs opacity-60">
+                        No Image
+                      </div>
+                    )}
                   </Link>
                 ))}
               </div>
@@ -249,16 +280,22 @@ export default function Profile() {
 
                       {/* Title */}
                       <div className="pr-8 mb-2">
-                        <h3 className="card-title text-base line-clamp-2">{ev.name}</h3>
+                        <h3 className="card-title text-base line-clamp-2">
+                          {ev.name}
+                        </h3>
                       </div>
-                      
+
                       {/* Location */}
-                      <p className="opacity-80 text-sm line-clamp-2 mb-2">{ev.address}</p>
-                      
+                      <p className="opacity-80 text-sm line-clamp-2 mb-2">
+                        {ev.address}
+                      </p>
+
                       {/* Date */}
                       <div className="mb-2">
                         <span className="badge badge-outline text-xs">
-                          {ev.date ? new Date(ev.date).toLocaleDateString() : "Date TBA"}
+                          {ev.date
+                            ? new Date(ev.date).toLocaleDateString()
+                            : "Date TBA"}
                         </span>
                       </div>
 
