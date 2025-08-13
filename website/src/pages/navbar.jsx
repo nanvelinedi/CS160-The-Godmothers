@@ -1,5 +1,5 @@
 // pages/Navbar.jsx
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Home,
   Compass,
@@ -7,21 +7,20 @@ import {
   Bookmark,
   Plus,
   FileQuestionMark,
-  Search
+  Search,
 } from "lucide-react";
 
 export default function Navbar() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-base-100 p-6 flex flex-col">
       {/* Logo */}
-  
+
       <div className="flex items-center gap-2 mb-8">
-        
         <div className="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center">
           <div className="w-4 h-4 bg-gray-300 rounded-sm"></div>
         </div>
         <Link to="/" className="">
-        <span className="text-xl font-bold text-gray-700">LOGO</span>
+          <span className="text-xl font-bold text-gray-700">LOGO</span>
         </Link>
       </div>
       {/* Main Section */}
@@ -54,7 +53,7 @@ export default function Navbar() {
               />
             </label>
           </li> */}
-            <li>
+          <li>
             <Link
               to="/searchpage"
               className="flex items-center gap-3 text-gray-700 hover:text-gray-900 transition-colors"
