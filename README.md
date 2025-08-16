@@ -6,11 +6,6 @@ ArtMart Finder is a social app to discover local art marts on a map and let arti
 
 This repository contains the frontend in the "website" folder. 
 
-## Prerequisites
-
-- Node.js >= 18 (recommended) and npm
-- Git (optional)
-
 ## How to Start Website
 
 1. Clone the repo
