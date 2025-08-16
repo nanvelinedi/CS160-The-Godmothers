@@ -8,14 +8,14 @@ This repository contains the frontend in the "website" folder.
 
 ## How to Start Website
 
-1. Clone the repo
+1. Clone the repo:
    git clone <your-repo-url>
    cd <repo-name>
 
-2. Go to the frontend
+2. Go to the frontend:
    cd website
 
-3. Install dependencies
+3. Install dependencies:
    npm install
 
    NOTE: If npm install errors on a specific package (e.g., lucide-react),
@@ -24,8 +24,8 @@ This repository contains the frontend in the "website" folder.
 
    If anything else errors, install it individually (e.g., npm install <pkg>).
 
-4. Run the dev server
+4. Run the dev server:
    npm run dev
 
-5. Open the app
+5. Open the app:
    Vite will print a local URL (usually http://localhost:5173). Open it in your browser.
