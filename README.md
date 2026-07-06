@@ -2,7 +2,7 @@
 
 ## Overview
 
-ArtMart Finder is a social app to discover local art marts on a map and let artists/organizations post events and artwork.
+ArtMart Finder is a social app to discover local art marts on a map and let artists/organizations post events and artwork. [Video Demonstration](https://youtu.be/Gj5rUgTW89g?si=UXGz3PgvCv1bg1r_) of the working website. 
 
 This repository contains the frontend in the "website" folder. 
 
